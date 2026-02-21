@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>نادي غرس - تسجيل الدخول</title>
+<link rel="stylesheet" href="css/main.css">
+<style>
+.particles-bg { position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+.p-circle {
+  position:absolute;
+  border-radius:50%;
+  border:1px solid rgba(201,162,39,0.15);
+  animation: rotateCir linear infinite;
+}
+@keyframes rotateCir { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="login-page">
+  <!-- Particles -->
+  <div class="particles-bg" id="particles"></div>
+
+  <div class="login-card" style="z-index:1;">
+    <div class="login-logo">
+      <span class="plant-icon">🌱</span>
+      <div class="club-name">نادي غرس</div>
+      <div class="club-subtitle">النظام التعليمي المتكامل</div>
+    </div>
+
+    <div class="form-group">
+      <label>اسم المستخدم</label>
+      <input type="text" id="username" placeholder="أدخل اسم المستخدم" autocomplete="username" dir="ltr">
+    </div>
+
+    <div class="form-group">
+      <label>كلمة المرور</label>
+      <input type="password" id="password" placeholder="أدخل كلمة المرور" autocomplete="current-password" dir="ltr">
+    </div>
+
+    <button class="btn-login" onclick="doLogin()">
+      <span id="login-btn-text">دخول 🚀</span>
+    </button>
+
+    <div class="login-error" id="login-error">⚠️ اسم المستخدم أو كلمة المرور غير صحيحة</div>
+  </div>
+
+  <footer style="position:absolute;bottom:16px;left:0;right:0;text-align:center;color:rgba(255,255,255,0.3);font-size:11px;z-index:1;">
+    جميع الحقوق محفوظة لـ نادي غرس © 2026
+  </footer>
+</div>
+
+<script src="js/storage.js"></script>
+<script>
+initDefaults();
+
+// Auto-redirect if session exists
+const session = GharsAuth.getSession();
+if (session) {
+  window.location.href = session.type === 'teacher' ? 'teacher.html' : 'student.html';
+}
+
+// Particles
+function createParticles() {
+  const container = document.getElementById('particles');
+  // Rotating circles
+  const sizes = [300, 450, 600, 200];
+  sizes.forEach((size, i) => {
+    const div = document.createElement('div');
+    div.className = 'p-circle';
+    div.style.cssText = `width:${size}px;height:${size}px;top:50%;left:50%;
+      margin-top:-${size/2}px;margin-left:-${size/2}px;
+      animation-duration:${20+i*8}s; animation-direction:${i%2?'reverse':'normal'};`;
+    container.appendChild(div);
+  });
+  // Floating dots
+  for (let i=0; i<20; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'particle';
+    dot.style.cssText = `
+      left:${Math.random()*100}%;
+      bottom:${Math.random()*20}%;
+      width:${2+Math.random()*4}px;
+      height:${2+Math.random()*4}px;
+      animation-duration:${6+Math.random()*12}s;
+      animation-delay:${Math.random()*8}s;
+      opacity:${0.2+Math.random()*0.4};
+    `;
+    container.appendChild(dot);
+  }
+}
+createParticles();
+
+function doLogin() {
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value.trim();
+  const errEl = document.getElementById('login-error');
+  const btnText = document.getElementById('login-btn-text');
+
+  if (!username || !password) {
+    errEl.style.display='block';
+    errEl.textContent = '⚠️ يرجى إدخال اسم المستخدم وكلمة المرور';
+    return;
+  }
+
+  btnText.innerHTML = '<span style="display:inline-block;animation:spin 0.7s linear infinite;border:2px solid rgba(255,255,255,0.3);border-top-color:var(--navy);border-radius:50%;width:16px;height:16px;"></span>';
+
+  setTimeout(() => {
+    const result = GharsAuth.login(username, password);
+    btnText.textContent = 'دخول 🚀';
+
+    if (result) {
+      errEl.style.display='none';
+      if (result.type === 'teacher') {
+        window.location.href = 'teacher.html';
+      } else {
+        window.location.href = 'student.html';
+      }
+    } else {
+      errEl.style.display='block';
+      errEl.textContent = '⚠️ اسم المستخدم أو كلمة المرور غير صحيحة';
+    }
+  }, 600);
+}
+
+// Enter key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') doLogin();
+});
+</script>
+</body>
+</html>

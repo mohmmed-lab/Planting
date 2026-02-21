@@ -1,0 +1,1986 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>نادي غرس - المعلم</title>
+<link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+<!-- SIDEBAR OVERLAY -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <span class="sidebar-logo">🌱</span>
+    <div class="sidebar-club-name">نادي غرس</div>
+    <div style="color:var(--gray);font-size:11px;margin-top:4px;">لوحة المعلم</div>
+  </div>
+  <div class="sidebar-nav">
+    <button onclick="showPage('home');closeSidebar()" id="nav-home" class="active"><span class="nav-icon">🏠</span> الصفحة الرئيسية</button>
+    <button onclick="showPage('homework');closeSidebar()" id="nav-homework"><span class="nav-icon">📝</span> الواجبات</button>
+    <button onclick="showPage('students');closeSidebar()" id="nav-students"><span class="nav-icon">👥</span> الطلاب</button>
+    <button onclick="showPage('meetings');closeSidebar()" id="nav-meetings"><span class="nav-icon">📅</span> إعلان اللقاء</button>
+    <button onclick="showPage('initiatives');closeSidebar()" id="nav-initiatives"><span class="nav-icon">⭐</span> المبادرات</button>
+    <button onclick="showPage('memorization');closeSidebar()" id="nav-memorization"><span class="nav-icon">📖</span> مقرر التسميع</button>
+    <button onclick="showPage('groups');closeSidebar()" id="nav-groups"><span class="nav-icon">🏆</span> المجموعات</button>
+    <button onclick="showPage('seerah');closeSidebar()" id="nav-seerah"><span class="nav-icon">🕌</span> درس السيرة</button>
+  </div>
+  <div class="sidebar-footer">
+    <button class="btn-logout" onclick="GharsAuth.logout()">🚪 تسجيل الخروج</button>
+  </div>
+</nav>
+
+<!-- COUNTDOWN BANNER -->
+<div class="countdown-banner" id="countdown-banner">
+  <div class="countdown-bar">
+    <span>⏱️</span>
+    <span id="meeting-title-display" style="font-size:11px;color:var(--gray)"></span>
+    <span id="countdown-display">--:--:--</span>
+    <span style="font-size:11px">ثانية</span>
+  </div>
+</div>
+
+<!-- TOP BAR -->
+<header class="top-bar">
+  <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+  <div class="top-bar-title">
+    <span>🌱</span>
+    <span id="top-bar-page-title">الصفحة الرئيسية</span>
+  </div>
+  <div class="top-bar-actions">
+    <span style="font-size:12px;color:var(--gray)" id="teacher-name-display"></span>
+  </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<main class="main-content">
+
+<!-- ===== HOME PAGE ===== -->
+<section class="page-section active" id="page-home">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">📊 إحصائيات الطلاب</div>
+    </div>
+    <div class="stats-grid" id="home-stats-btns">
+      <button class="stat-btn" onclick="showStat('attendance')" id="stat-btn-attendance">
+        <span class="stat-icon">📋</span> الغياب والحضور
+      </button>
+      <button class="stat-btn" onclick="showStat('homework')" id="stat-btn-homework">
+        <span class="stat-icon">📝</span> الواجبات
+      </button>
+      <button class="stat-btn" onclick="showStat('memo-leaders')" id="stat-btn-memo-leaders">
+        <span class="stat-icon">🏅</span> متصدري النظم
+      </button>
+      <button class="stat-btn" onclick="showStat('init-leaders')" id="stat-btn-init-leaders">
+        <span class="stat-icon">⭐</span> متصدري المبادرات
+      </button>
+      <button class="stat-btn" onclick="showStat('group-leaders')" id="stat-btn-group-leaders">
+        <span class="stat-icon">🏆</span> المجموعات المتصدرة
+      </button>
+    </div>
+
+    <!-- Stat Contents -->
+    <div id="stat-content-attendance" class="stat-content">
+      <h4 style="margin-bottom:14px;color:var(--navy);font-size:15px;">📋 سجل الحضور والغياب</h4>
+      <div class="table-wrap" id="att-table-wrap"></div>
+    </div>
+    <div class="section-divider" id="divider-attendance" style="display:none"></div>
+
+    <div id="stat-content-homework" class="stat-content">
+      <h4 style="margin-bottom:14px;color:var(--navy);font-size:15px;">📝 إحصائيات الواجبات</h4>
+      <div id="hw-stat-selector" style="margin-bottom:12px"></div>
+      <div class="table-wrap" id="hw-table-wrap"></div>
+    </div>
+    <div class="section-divider" id="divider-homework" style="display:none"></div>
+
+    <div id="stat-content-memo-leaders" class="stat-content">
+      <h4 style="margin-bottom:14px;color:var(--navy);font-size:15px;">🏅 متصدري التسميع</h4>
+      <div class="table-wrap" id="memo-leaders-wrap"></div>
+    </div>
+    <div class="section-divider" id="divider-memo-leaders" style="display:none"></div>
+
+    <div id="stat-content-init-leaders" class="stat-content">
+      <h4 style="margin-bottom:14px;color:var(--navy);font-size:15px;">⭐ متصدري المبادرات</h4>
+      <div class="table-wrap" id="init-leaders-wrap"></div>
+    </div>
+    <div class="section-divider" id="divider-init-leaders" style="display:none"></div>
+
+    <div id="stat-content-group-leaders" class="stat-content">
+      <h4 style="margin-bottom:14px;color:var(--navy);font-size:15px;">🏆 المجموعات المتصدرة</h4>
+      <div class="table-wrap" id="group-leaders-wrap"></div>
+    </div>
+  </div>
+
+  <!-- Bottom Stats -->
+  <div class="bottom-stats" id="bottom-stats-grid" style="margin-top:20px;"></div>
+
+  <!-- Last Seen -->
+  <div class="card last-seen-section" style="margin-top:20px;">
+    <div class="card-title" style="margin-bottom:16px;">👁️ آخر ظهور للطلاب</div>
+    <div class="table-wrap" id="last-seen-wrap"></div>
+  </div>
+</section>
+
+<!-- ===== HOMEWORK PAGE ===== -->
+<section class="page-section" id="page-homework">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">📝 الواجبات</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-gold btn-sm" onclick="showAddHomeworkPage()">➕ إضافة واجب جديد</button>
+        <button class="btn btn-gray btn-sm" onclick="confirmClearHomeworks()">🗑️ حذف السجل</button>
+      </div>
+    </div>
+
+    <h4 style="color:var(--navy);margin-bottom:12px;font-size:14px;font-weight:700;">📤 الواجبات المرسلة</h4>
+    <div id="sent-homeworks"></div>
+
+    <div class="section-divider"></div>
+
+    <h4 style="color:var(--navy);margin-bottom:12px;font-size:14px;font-weight:700;">✅ الواجبات المنتهية</h4>
+    <div id="ended-homeworks"></div>
+  </div>
+</section>
+
+<!-- ===== ADD HOMEWORK PAGE ===== -->
+<section class="page-section" id="page-add-homework">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">➕ إضافة واجب جديد</div>
+      <button class="btn btn-gray btn-sm" onclick="showPage('homework')">← رجوع</button>
+    </div>
+
+    <div class="form-row">
+      <label class="form-label">عنوان الواجب *</label>
+      <input type="text" class="form-input" id="hw-title" placeholder="أدخل عنوان الواجب">
+    </div>
+
+    <div id="questions-container"></div>
+
+    <button class="btn btn-outline-gold btn-sm" onclick="addQuestion()" style="margin-bottom:16px;">
+      ➕ إضافة سؤال جديد
+    </button>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
+      <div>
+        <label class="form-label" style="font-size:12px;">📅 آخر موعد للحل (اختياري)</label>
+        <div class="datetime-picker-wrapper">
+          <input type="date" id="hw-deadline-date">
+          <input type="time" id="hw-deadline-time">
+        </div>
+      </div>
+      <div>
+        <label class="form-label" style="font-size:12px;">⏱️ مؤقت لحل الأسئلة (دقائق)</label>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <input type="number" class="form-input" id="hw-timer-min" placeholder="0" min="0" style="width:100px;">
+          <span style="font-size:12px;color:var(--gray)">0 = بلا وقت</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;">
+      <button class="btn btn-gold" onclick="publishHomework()">📤 إرسال الواجب</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STUDENTS PAGE ===== -->
+<section class="page-section" id="page-students">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">👥 قائمة الطلاب</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-gold btn-sm" onclick="openModal('modal-add-student')">➕ إضافة طالب</button>
+        <button class="btn btn-gray btn-sm" onclick="confirmClearStudents()">🗑️ مسح الكل</button>
+      </div>
+    </div>
+    <div id="students-list"></div>
+  </div>
+</section>
+
+<!-- ===== MEETINGS PAGE ===== -->
+<section class="page-section" id="page-meetings">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">📅 سجل اللقاءات</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-gold btn-sm" onclick="showPage('add-meeting')">➕ إضافة لقاء</button>
+        <button class="btn btn-gray btn-sm" onclick="confirmClearMeetings()">🗑️ مسح الكل</button>
+      </div>
+    </div>
+    <div id="meetings-list"></div>
+  </div>
+</section>
+
+<!-- ===== ADD MEETING PAGE ===== -->
+<section class="page-section" id="page-add-meeting">
+  <div class="card" style="max-width:500px;margin:0 auto;">
+    <div class="card-header">
+      <div class="card-title">➕ إضافة لقاء جديد</div>
+      <button class="btn btn-gray btn-sm" onclick="showPage('meetings')">← رجوع</button>
+    </div>
+    <div class="form-row">
+      <label class="form-label">عنوان اللقاء (اختياري)</label>
+      <input type="text" class="form-input" id="meeting-title-input" placeholder="مثال: لقاء الأسبوع الثاني">
+    </div>
+    <div class="form-row">
+      <label class="form-label">📅 تاريخ ووقت اللقاء *</label>
+      <div class="datetime-picker-wrapper">
+        <input type="date" id="meeting-date">
+        <input type="time" id="meeting-time">
+      </div>
+    </div>
+    <div style="text-align:left;margin-top:16px;">
+      <button class="btn btn-gold" id="meeting-save-btn" onclick="saveMeeting()">💾 حفظ</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== INITIATIVES PAGE ===== -->
+<section class="page-section" id="page-initiatives">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">⭐ المبادرات</div>
+      <button class="btn btn-gray btn-sm" onclick="confirmClearInitiatives()">🗑️ مسح الكل</button>
+    </div>
+    <div id="initiatives-list"></div>
+    <div style="text-align:center;margin-top:16px;">
+      <button class="btn btn-gold" onclick="saveInitiatives()">💾 إضافة النقاط</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== MEMORIZATION PAGE ===== -->
+<section class="page-section" id="page-memorization">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">📖 مقرر التسميع</div>
+      <button class="btn btn-gray btn-sm" onclick="confirmClearMemo()">🗑️ مسح الكل</button>
+    </div>
+
+    <!-- Fixed number box -->
+    <div class="memo-header">
+      <div class="memo-fixed-box">
+        <div style="font-size:12px;color:var(--gray);margin-bottom:6px;">المقرر الثابت</div>
+        <span class="memo-fixed-num" id="memo-fixed-display">0</span>
+        <div style="font-size:11px;color:var(--gray);margin-top:4px;">نقطة</div>
+        <div id="memo-fixed-edit-area" style="margin-top:12px;">
+          <input type="number" class="form-input" id="memo-fixed-input" placeholder="أدخل الرقم" style="margin-bottom:8px;">
+          <button class="btn btn-gold btn-sm" id="memo-fixed-btn" onclick="saveMemoFixed()">💾 حفظ الرقم</button>
+        </div>
+        <button class="btn btn-outline-gold btn-sm" id="memo-fixed-toggle" onclick="toggleMemoFixed()" style="margin-top:8px;display:none;">✏️ تعديل</button>
+      </div>
+    </div>
+
+    <div id="memo-students-list"></div>
+
+    <div style="text-align:left;margin-top:16px;">
+      <button class="btn btn-gold" onclick="saveMemoScores()">💾 حفظ التقييمات</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== GROUPS PAGE ===== -->
+<section class="page-section" id="page-groups">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">🏆 المجموعات</div>
+      <button class="btn btn-gold btn-sm" onclick="openModal('modal-add-group')">➕ إضافة مجموعة</button>
+    </div>
+    <div id="groups-list"></div>
+  </div>
+</section>
+
+<!-- ===== SEERAH PAGE ===== -->
+<section class="page-section" id="page-seerah">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">🕌 درس السيرة</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-gold btn-sm" onclick="showPage('add-seerah')">➕ إضافة درس</button>
+        <button class="btn btn-gray btn-sm" onclick="confirmClearSeerah()">🗑️ مسح السجل</button>
+      </div>
+    </div>
+    <div id="seerah-list"></div>
+  </div>
+</section>
+
+<!-- ===== ADD SEERAH PAGE ===== -->
+<section class="page-section" id="page-add-seerah">
+  <div class="card" style="max-width:700px;margin:0 auto;">
+    <div class="card-header">
+      <div class="card-title">📚 إضافة درس جديد</div>
+      <button class="btn btn-gray btn-sm" onclick="showPage('seerah')">← رجوع</button>
+    </div>
+
+    <div class="form-row">
+      <label class="form-label">عنوان الدرس *</label>
+      <input type="text" class="form-input" id="seerah-title" placeholder="أدخل عنوان الدرس">
+    </div>
+
+    <!-- Video type selector -->
+    <div class="form-row">
+      <label class="form-label">نوع المحتوى المرئي</label>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;padding:8px 14px;border:1.5px solid var(--gray-mid);border-radius:8px;transition:all 0.2s;">
+          <input type="radio" name="video-type" value="youtube" id="vt-youtube" onchange="toggleVideoType()"> 🎬 رابط يوتيوب
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;padding:8px 14px;border:1.5px solid var(--gray-mid);border-radius:8px;transition:all 0.2s;">
+          <input type="radio" name="video-type" value="upload" id="vt-upload" onchange="toggleVideoType()"> 📁 رفع فيديو من الجهاز
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;padding:8px 14px;border:1.5px solid var(--gray-mid);border-radius:8px;transition:all 0.2s;">
+          <input type="radio" name="video-type" value="none" id="vt-none" checked onchange="toggleVideoType()"> 🚫 بدون فيديو
+        </label>
+      </div>
+    </div>
+
+    <div id="youtube-input-area" style="display:none;" class="form-row">
+      <label class="form-label">رابط يوتيوب</label>
+      <input type="url" class="form-input" id="seerah-youtube-url" placeholder="https://youtube.com/watch?v=...">
+    </div>
+
+    <div id="upload-video-area" style="display:none;" class="form-row">
+      <label class="form-label">رفع مقطع فيديو</label>
+      <div class="upload-zone" id="video-upload-zone" onclick="document.getElementById('video-file-input').click()">
+        <span class="upload-icon">🎬</span>
+        <p style="font-size:13px;color:var(--gray);">انقر لاختيار مقطع فيديو</p>
+        <p style="font-size:11px;color:var(--gray);">MP4 / MKV / MOV / AVI / 3GP (يدعم ساعتين وأكثر)</p>
+        <input type="file" id="video-file-input" accept="video/mp4,video/mkv,video/quicktime,video/avi,video/3gpp,.mkv,.mov,.avi,.3gp" onchange="handleVideoFile(event)">
+      </div>
+      <div id="video-preview-area" style="display:none;margin-top:10px;">
+        <div style="display:flex;align-items:center;gap:10px;background:var(--gray-light);padding:10px 14px;border-radius:8px;">
+          <span style="font-size:20px;">🎬</span>
+          <div>
+            <div id="video-file-name" style="font-weight:700;font-size:13px;"></div>
+            <div id="video-file-size" style="font-size:11px;color:var(--gray);"></div>
+          </div>
+          <button class="btn btn-red btn-xs" onclick="removeVideoFile()">✕</button>
+        </div>
+        <div id="video-upload-progress" style="display:none;margin-top:8px;">
+          <div style="background:var(--gray-mid);border-radius:4px;overflow:hidden;height:6px;">
+            <div id="video-progress-bar" style="background:var(--gold);height:100%;width:0%;transition:width 0.3s;"></div>
+          </div>
+          <p style="font-size:11px;color:var(--gray);margin-top:4px;" id="video-progress-text">جارٍ الحفظ...</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label class="form-label">موضوع الدرس</label>
+      <textarea class="form-textarea" id="seerah-topic" placeholder="اكتب موضوع الدرس هنا..." rows="3"></textarea>
+      <div style="margin-top:8px;">
+        <label class="form-label" style="font-size:11px;color:var(--gray);">ربط واجب (اختياري)</label>
+        <select class="form-select" id="seerah-hw-select" style="font-size:13px;">
+          <option value="">-- اختر واجباً --</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="text-align:left;margin-top:16px;">
+      <button class="btn btn-gold" id="seerah-submit-btn" onclick="publishSeerah()">📤 إرسال الدرس</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== EDIT SEERAH PAGE ===== -->
+<section class="page-section" id="page-edit-seerah">
+  <div class="card" style="max-width:700px;margin:0 auto;">
+    <div class="card-header">
+      <div class="card-title">✏️ تعديل الدرس</div>
+      <button class="btn btn-gray btn-sm" onclick="showPage('seerah')">← رجوع</button>
+    </div>
+    <div id="edit-seerah-form"></div>
+  </div>
+</section>
+
+<!-- ===== SEERAH COMMENTS PAGE ===== -->
+<section class="page-section" id="page-seerah-comments">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title" id="seerah-comments-title">💬 التعليقات</div>
+      <button class="btn btn-gray btn-sm" onclick="showPage('seerah')">← رجوع</button>
+    </div>
+    <div id="seerah-comments-list"></div>
+  </div>
+</section>
+
+<!-- ===== HOMEWORK ANSWERS PAGE ===== -->
+<section class="page-section" id="page-hw-answers">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title" id="hw-answers-title">📋 أجوبة الطالب</div>
+      <button class="btn btn-gray btn-sm" onclick="goBackFromAnswers()">← رجوع</button>
+    </div>
+    <div id="hw-answers-content"></div>
+  </div>
+</section>
+
+<!-- ===== CHEATING DETAILS PAGE ===== -->
+<section class="page-section" id="page-cheat-details">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title" id="cheat-details-title">🚨 تفاصيل الغش</div>
+      <button class="btn btn-gray btn-sm" onclick="goBackFromCheat()">← رجوع</button>
+    </div>
+    <div id="cheat-details-content"></div>
+  </div>
+</section>
+
+<!-- ===== ATTENDANCE STUDENT PAGE ===== -->
+<section class="page-section" id="page-take-attendance">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title" id="take-att-title">📋 تسجيل الحضور</div>
+      <button class="btn btn-gray btn-sm" onclick="showPage('meetings')">← رجوع</button>
+    </div>
+    <div id="take-att-list"></div>
+    <div style="text-align:left;margin-top:16px;">
+      <button class="btn btn-gold" onclick="saveAttendance()">💾 حفظ</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== GROUP STUDENTS PAGE ===== -->
+<section class="page-section" id="page-group-students">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title" id="group-students-title">👥 طلاب المجموعة</div>
+      <button class="btn btn-gray btn-sm" onclick="showPage('groups')">← رجوع</button>
+    </div>
+    <div id="group-students-list"></div>
+  </div>
+</section>
+
+<!-- ===== ADD POINTS PAGE ===== -->
+<section class="page-section" id="page-add-group-points">
+  <div class="card" style="max-width:400px;margin:0 auto;">
+    <div class="card-header">
+      <div class="card-title" id="add-points-title">➕ إضافة نقاط</div>
+      <button class="btn btn-gray btn-sm" onclick="showPage('groups')">← رجوع</button>
+    </div>
+    <div class="form-row">
+      <label class="form-label">عدد النقاط</label>
+      <input type="number" class="form-input" id="group-points-input" placeholder="0" min="0">
+    </div>
+    <div style="text-align:left;margin-top:12px;">
+      <button class="btn btn-gold" onclick="saveGroupPoints()">💾 حفظ وعودة</button>
+    </div>
+  </div>
+</section>
+
+</main><!-- end main-content -->
+
+<!-- ===== MODALS ===== -->
+
+<!-- Add Student Modal -->
+<div class="modal-overlay" id="modal-add-student">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">👤 إضافة طالب جديد</div>
+      <button class="modal-close" onclick="closeModal('modal-add-student')">✕</button>
+    </div>
+    <div class="form-row">
+      <label class="form-label">اسم الطالب *</label>
+      <input type="text" class="form-input" id="new-student-name" placeholder="أدخل اسم الطالب">
+    </div>
+    <div class="form-row">
+      <label class="form-label">المجموعة</label>
+      <select class="form-select" id="new-student-group">
+        <option value="">-- اختر مجموعة --</option>
+      </select>
+    </div>
+    <div style="background:var(--gray-light);border-radius:10px;padding:14px;margin-bottom:16px;" id="generated-creds">
+      <div style="font-size:12px;color:var(--gray);margin-bottom:8px;font-weight:600;">بيانات الدخول المُولَّدة</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <div style="flex:1;">
+          <div style="font-size:11px;color:var(--gray);">اسم المستخدم</div>
+          <div id="gen-username" style="font-weight:700;color:var(--navy);font-size:13px;direction:ltr;text-align:left;"></div>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:11px;color:var(--gray);">كلمة المرور</div>
+          <div id="gen-password" style="font-weight:700;color:var(--navy);font-size:13px;direction:ltr;text-align:left;"></div>
+        </div>
+        <button class="btn btn-outline-gold btn-xs" onclick="regenCreds()">🔄</button>
+      </div>
+    </div>
+    <div style="text-align:left;">
+      <button class="btn btn-gold" onclick="saveNewStudent()">💾 حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- View Student Info Modal -->
+<div class="modal-overlay" id="modal-student-info">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">👤 معلومات الطالب</div>
+      <button class="modal-close" onclick="closeModal('modal-student-info')">✕</button>
+    </div>
+    <div id="student-info-content"></div>
+    <div style="text-align:center;margin-top:20px;">
+      <button class="btn btn-gold" onclick="closeModal('modal-student-info')">حسناً</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Group Modal -->
+<div class="modal-overlay" id="modal-add-group">
+  <div class="modal" style="max-width:380px;">
+    <div class="modal-header">
+      <div class="modal-title">🏆 إضافة مجموعة</div>
+      <button class="modal-close" onclick="closeModal('modal-add-group')">✕</button>
+    </div>
+    <div class="form-row">
+      <label class="form-label">اسم المجموعة *</label>
+      <input type="text" class="form-input" id="new-group-name" placeholder="أدخل اسم المجموعة">
+    </div>
+    <div style="text-align:left;">
+      <button class="btn btn-gold" onclick="saveNewGroup()">💾 حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- Initiative Details Modal -->
+<div class="modal-overlay" id="modal-init-details">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="init-details-title">📊 تفاصيل النقاط</div>
+      <button class="modal-close" onclick="closeModal('modal-init-details')">✕</button>
+    </div>
+    <div id="init-details-content"></div>
+    <div style="text-align:center;margin-top:16px;">
+      <button class="btn btn-gold" onclick="closeModal('modal-init-details')">حسناً</button>
+    </div>
+  </div>
+</div>
+
+<!-- Homework Success Modal -->
+<div class="modal-overlay" id="modal-hw-success">
+  <div class="modal" style="max-width:380px;text-align:center;">
+    <button class="modal-close" onclick="closeModal('modal-hw-success')">✕</button>
+    <div style="font-size:56px;margin-bottom:16px;">✅</div>
+    <h3 style="color:var(--navy);margin-bottom:10px;">تم الإرسال بنجاح!</h3>
+    <p style="color:var(--gray);font-size:14px;margin-bottom:20px;">تم إرسال الواجب إلى جميع الطلاب بنجاح</p>
+    <button class="btn btn-gold" onclick="closeModal('modal-hw-success');showPage('homework')">تم ✓</button>
+  </div>
+</div>
+
+<!-- Attendance Modal -->
+<div class="modal-overlay" id="modal-attendance">
+  <div class="modal wide">
+    <div class="modal-header">
+      <div class="modal-title">📋 تسجيل الحضور</div>
+      <button class="modal-close" onclick="closeModal('modal-attendance')">✕</button>
+    </div>
+    <div id="modal-att-list"></div>
+    <div style="text-align:left;margin-top:16px;display:flex;gap:8px;justify-content:flex-end;">
+      <button class="btn btn-gray btn-sm" onclick="closeModal('modal-attendance')">إلغاء</button>
+      <button class="btn btn-gold btn-sm" onclick="saveAttendanceFromModal()">💾 حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="site-footer">جميع الحقوق محفوظة لـ نادي غرس © 2026</footer>
+
+<script src="js/storage.js"></script>
+<script>
+// ===== AUTH CHECK =====
+initDefaults();
+const sess = GharsAuth.getSession();
+if (!sess || sess.type !== 'teacher') { window.location.href='index.html'; }
+else { document.getElementById('teacher-name-display').textContent = sess.name || 'المعلم'; }
+
+// ===== STATE =====
+let currentPage = 'home';
+let currentStat = null;
+let editingHwId = null;
+let editingMeetingId = null;
+let currentAttMeetingId = null;
+let currentGroupId = null;
+let hwAnswersBackPage = 'home';
+let cheatBackPage = 'home';
+let pendingVideoFile = null;
+let pendingVideoId = null;
+let editingSeerahId = null;
+
+// Load stored page
+const storedPage = sessionStorage.getItem('teacher_page');
+if (storedPage) { setTimeout(() => showPage(storedPage), 50); }
+
+// ===== SIDEBAR =====
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('sidebar-overlay');
+  sb.classList.toggle('open');
+  ov.classList.toggle('active');
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('active');
+}
+
+// ===== PAGE NAVIGATION =====
+const pageTitles = {
+  'home':'الصفحة الرئيسية','homework':'الواجبات','add-homework':'إضافة واجب',
+  'students':'الطلاب','meetings':'اللقاءات','add-meeting':'إضافة لقاء',
+  'initiatives':'المبادرات','memorization':'مقرر التسميع','groups':'المجموعات',
+  'seerah':'درس السيرة','add-seerah':'إضافة درس','edit-seerah':'تعديل درس',
+  'seerah-comments':'التعليقات','hw-answers':'أجوبة الطالب',
+  'cheat-details':'تفاصيل الغش','take-attendance':'تسجيل الحضور',
+  'group-students':'طلاب المجموعة','add-group-points':'إضافة نقاط'
+};
+
+function showPage(name) {
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('page-' + name);
+  if (el) {
+    el.classList.add('active');
+    el.classList.add('fade-in');
+    setTimeout(() => el.classList.remove('fade-in'), 400);
+  }
+  currentPage = name;
+  sessionStorage.setItem('teacher_page', name);
+  document.getElementById('top-bar-page-title').textContent = pageTitles[name] || name;
+
+  // Update nav active
+  document.querySelectorAll('.sidebar-nav button').forEach(b => b.classList.remove('active'));
+  const navMap = {home:'nav-home',homework:'nav-homework','add-homework':'nav-homework',
+    students:'nav-students',meetings:'nav-meetings','add-meeting':'nav-meetings',
+    initiatives:'nav-initiatives',memorization:'nav-memorization',groups:'nav-groups',
+    seerah:'nav-seerah','add-seerah':'nav-seerah','edit-seerah':'nav-seerah'};
+  const navId = navMap[name];
+  if (navId) { const nb = document.getElementById(navId); if(nb) nb.classList.add('active'); }
+
+  // Render page
+  if (name === 'home') renderHome();
+  else if (name === 'homework') renderHomeworks();
+  else if (name === 'add-homework') renderAddHomeworkForm();
+  else if (name === 'students') renderStudents();
+  else if (name === 'meetings') renderMeetings();
+  else if (name === 'initiatives') renderInitiatives();
+  else if (name === 'memorization') renderMemorization();
+  else if (name === 'groups') renderGroups();
+  else if (name === 'seerah') renderSeerah();
+  else if (name === 'add-seerah') renderAddSeerahForm();
+
+  window.scrollTo(0, 0);
+}
+
+// ===== COUNTDOWN =====
+let countdownInterval = null;
+
+function startMeetingCountdown() {
+  const meeting = GharsStore.get('next_meeting');
+  const banner = document.getElementById('countdown-banner');
+  if (countdownInterval) clearInterval(countdownInterval);
+
+  if (!meeting) { banner.classList.remove('show'); return; }
+
+  banner.classList.add('show');
+  const titleEl = document.getElementById('meeting-title-display');
+  const dispEl = document.getElementById('countdown-display');
+  if (meeting.title) titleEl.textContent = meeting.title + ' • ';
+  else titleEl.textContent = '';
+
+  countdownInterval = startCountdown(meeting.datetime, dispEl, () => {
+    banner.classList.remove('show');
+  });
+}
+
+// ===== HOME RENDER =====
+function renderHome() {
+  renderBottomStats();
+  renderLastSeen();
+  startMeetingCountdown();
+  // If stat was open, re-render it
+  if (currentStat) showStat(currentStat);
+}
+
+function showStat(name) {
+  // Toggle
+  if (currentStat === name) {
+    document.querySelectorAll('.stat-content').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.stat-btn').forEach(b => b.classList.remove('active'));
+    currentStat = null;
+    return;
+  }
+  document.querySelectorAll('.stat-content').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.stat-btn').forEach(b => b.classList.remove('active'));
+  const content = document.getElementById('stat-content-' + name);
+  const btn = document.getElementById('stat-btn-' + name);
+  if (content) content.classList.add('active');
+  if (btn) btn.classList.add('active');
+  currentStat = name;
+
+  if (name === 'attendance') renderAttendanceStat();
+  else if (name === 'homework') renderHomeworkStat();
+  else if (name === 'memo-leaders') renderMemoLeaders();
+  else if (name === 'init-leaders') renderInitLeaders();
+  else if (name === 'group-leaders') renderGroupLeaders();
+}
+
+function renderAttendanceStat() {
+  const students = GharsStore.get('students', []);
+  const attendance = GharsStore.get('attendance', {});
+  const meetings = GharsStore.get('meetings', []);
+
+  if (!students.length) {
+    document.getElementById('att-table-wrap').innerHTML = '<p style="color:var(--gray);padding:16px;text-align:center;">لا يوجد طلاب مسجلون</p>';
+    return;
+  }
+
+  let html = '<table><thead><tr><th>اسم الطالب</th><th>عدد مرات الحضور</th><th>عدد مرات الاستئذان</th><th>عدد مرات الغياب</th></tr></thead><tbody>';
+  students.forEach((s, i) => {
+    const records = attendance[s.id] || [];
+    const present = records.filter(r => r.status === 'present').length;
+    const excused = records.filter(r => r.status === 'excused').length;
+    const absent = records.filter(r => r.status === 'absent').length;
+    html += `<tr style="border-bottom:1px solid var(--gray-mid)">
+      <td style="font-weight:600">${s.name}</td>
+      <td><span class="badge badge-green">${present}</span></td>
+      <td><span class="badge badge-orange">${excused}</span></td>
+      <td><span class="badge badge-red">${absent}</span></td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('att-table-wrap').innerHTML = html;
+}
+
+function renderHomeworkStat() {
+  const homeworks = GharsStore.get('homeworks', []);
+  const students = GharsStore.get('students', []);
+  const submissions = GharsStore.get('hw_submissions', {});
+
+  if (!homeworks.length) {
+    document.getElementById('hw-table-wrap').innerHTML = '<p style="color:var(--gray);padding:16px;text-align:center;">لا توجد واجبات</p>';
+    document.getElementById('hw-stat-selector').innerHTML = '';
+    return;
+  }
+
+  // Show selector for latest HW
+  const latestHw = homeworks[homeworks.length - 1];
+  let selectorHtml = '<div style="margin-bottom:12px;">';
+  selectorHtml += `<select class="form-select" onchange="renderHwStatTable(this.value)" style="max-width:300px;font-size:13px;">`;
+  homeworks.forEach(hw => {
+    selectorHtml += `<option value="${hw.id}" ${hw.id===latestHw.id?'selected':''}>${hw.title}</option>`;
+  });
+  selectorHtml += '</select></div>';
+  document.getElementById('hw-stat-selector').innerHTML = selectorHtml;
+  renderHwStatTable(latestHw.id);
+}
+
+function renderHwStatTable(hwId) {
+  const homeworks = GharsStore.get('homeworks', []);
+  const students = GharsStore.get('students', []);
+  const submissions = GharsStore.get('hw_submissions', {});
+  const hw = homeworks.find(h => h.id === hwId);
+  if (!hw || !students.length) return;
+
+  let html = '<table><thead><tr><th>اسم الطالب</th><th>الحالة</th><th>الدرجة</th><th>كشف الغش</th><th>التفاصيل</th></tr></thead><tbody>';
+  students.forEach(s => {
+    const sub = (submissions[hwId] || {})[s.id];
+    const status = sub ? '<span class="badge badge-green">تم الحل</span>' : '<span class="badge badge-gray">لم يتم الحل</span>';
+    const score = sub ? `${sub.score}/${hw.totalScore || 0}` : '-';
+    let cheatCell = '-';
+    if (sub) {
+      const warns = sub.warnings || 0;
+      if (warns === 0) cheatCell = '<span class="clean-badge">🟢 نظيف</span>';
+      else if (warns <= 2) cheatCell = `<span class="cheat-link" onclick="showCheatDetails('${hwId}','${s.id}','homework')">${warns === 1 ? '⚠️ غاش' : '⚠️⚠️ غاش'}</span>`;
+      else cheatCell = `<span class="traitor-link" onclick="showCheatDetails('${hwId}','${s.id}','homework')">🚩 خائن للأمانة</span>`;
+    }
+    const details = sub ? `<span class="btn btn-xs btn-outline-gold" style="cursor:pointer" onclick="showAnswersPage('${hwId}','${s.id}','homework')">الأجوبة</span>` : '-';
+    html += `<tr><td style="font-weight:600">${s.name}</td><td>${status}</td><td>${score}</td><td>${cheatCell}</td><td>${details}</td></tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('hw-table-wrap').innerHTML = html;
+}
+
+function renderMemoLeaders() {
+  const students = GharsStore.get('students', []);
+  const scores = GharsStore.get('memo_scores', {});
+  if (!students.length) { document.getElementById('memo-leaders-wrap').innerHTML = '<p style="color:var(--gray);padding:16px;text-align:center;">لا يوجد طلاب</p>'; return; }
+  const sorted = [...students].map(s => ({ ...s, score: scores[s.id] || 0 })).sort((a,b) => b.score - a.score);
+  let html = '<table><thead><tr><th>المركز</th><th>اسم الطالب</th><th>النقاط</th></tr></thead><tbody>';
+  sorted.forEach((s, i) => {
+    const medals = ['🥇','🥈','🥉'];
+    html += `<tr class="${i<3?'rank-'+(i+1):''}"><td style="font-weight:800;color:var(--gold-dark)">${medals[i]||i+1}</td><td style="font-weight:600">${s.name}</td><td style="font-weight:700;color:var(--navy)">${s.score}</td></tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('memo-leaders-wrap').innerHTML = html;
+}
+
+function renderInitLeaders() {
+  const students = GharsStore.get('students', []);
+  const initiatives = GharsStore.get('initiatives', {});
+  if (!students.length) { document.getElementById('init-leaders-wrap').innerHTML = '<p style="color:var(--gray);padding:16px;text-align:center;">لا يوجد طلاب</p>'; return; }
+  const sorted = [...students].map(s => ({ ...s, pts: (initiatives[s.id] || {}).total || 0 })).sort((a,b) => b.pts - a.pts);
+  let html = '<table><thead><tr><th>المركز</th><th>اسم الطالب</th><th>عدد النقاط</th></tr></thead><tbody>';
+  sorted.forEach((s, i) => {
+    const medals = ['🥇','🥈','🥉'];
+    html += `<tr class="${i<3?'rank-'+(i+1):''}"><td style="font-weight:800;color:var(--gold-dark)">${medals[i]||i+1}</td><td style="font-weight:600">${s.name}</td><td style="font-weight:700;color:var(--navy)">${s.pts}</td></tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('init-leaders-wrap').innerHTML = html;
+}
+
+function renderGroupLeaders() {
+  const groups = GharsStore.get('groups', []);
+  const groupPts = GharsStore.get('group_points', {});
+  if (!groups.length) { document.getElementById('group-leaders-wrap').innerHTML = '<p style="color:var(--gray);padding:16px;text-align:center;">لا توجد مجموعات</p>'; return; }
+  const sorted = [...groups].map(g => ({ ...g, pts: groupPts[g.id] || 0 })).sort((a,b) => b.pts - a.pts);
+  let html = '<table><thead><tr><th>المركز</th><th>اسم المجموعة</th><th>عدد النقاط</th></tr></thead><tbody>';
+  sorted.forEach((g, i) => {
+    const medals = ['🥇','🥈','🥉'];
+    html += `<tr class="${i<3?'rank-'+(i+1):''}"><td style="font-weight:800;color:var(--gold-dark)">${medals[i]||i+1}</td><td style="font-weight:700">${g.name}</td><td style="font-weight:700;color:var(--navy)">${g.pts}</td></tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('group-leaders-wrap').innerHTML = html;
+}
+
+function renderBottomStats() {
+  const students = GharsStore.get('students', []);
+  const groups = GharsStore.get('groups', []);
+  const memoScores = GharsStore.get('memo_scores', {});
+  const initiatives = GharsStore.get('initiatives', {});
+  const groupPts = GharsStore.get('group_points', {});
+
+  const topMemo = students.length ? [...students].sort((a,b) => (memoScores[b.id]||0) - (memoScores[a.id]||0))[0] : null;
+  const topInit = students.length ? [...students].sort((a,b) => ((initiatives[b.id]||{}).total||0) - ((initiatives[a.id]||{}).total||0))[0] : null;
+  const topGroup = groups.length ? [...groups].sort((a,b) => (groupPts[b.id]||0) - (groupPts[a.id]||0))[0] : null;
+
+  const el = document.getElementById('bottom-stats-grid');
+  el.innerHTML = `
+    <div class="bottom-stat-card"><span class="bsc-icon">👥</span><span class="bsc-value">${students.length}</span><span class="bsc-label">إجمالي الطلاب</span></div>
+    <div class="bottom-stat-card"><span class="bsc-icon">🏆</span><span class="bsc-value">${groups.length}</span><span class="bsc-label">إجمالي المجموعات</span></div>
+    <div class="bottom-stat-card"><span class="bsc-icon">🏅</span><span class="bsc-value" style="font-size:14px">${topMemo ? topMemo.name : '-'}</span><span class="bsc-label">متصدر النظم</span></div>
+    <div class="bottom-stat-card"><span class="bsc-icon">⭐</span><span class="bsc-value" style="font-size:14px">${topInit ? topInit.name : '-'}</span><span class="bsc-label">متصدر المبادرات</span></div>
+    <div class="bottom-stat-card"><span class="bsc-icon">🥇</span><span class="bsc-value" style="font-size:14px">${topGroup ? topGroup.name : '-'}</span><span class="bsc-label">المجموعة المتصدرة</span></div>
+  `;
+}
+
+function renderLastSeen() {
+  const students = GharsStore.get('students', []);
+  const lastSeen = GharsStore.get('last_seen', {});
+  if (!students.length) { document.getElementById('last-seen-wrap').innerHTML = '<p style="color:var(--gray);padding:16px;text-align:center;">لا يوجد طلاب</p>'; return; }
+  let html = '<table><thead><tr><th>اسم الطالب</th><th>اليوم</th><th>التاريخ</th><th>الوقت</th></tr></thead><tbody>';
+  students.forEach(s => {
+    const ls = lastSeen[s.id];
+    html += `<tr style="border-bottom:1px solid rgba(209,219,232,0.4)">
+      <td style="font-weight:600">${s.name}</td>
+      <td>${ls ? ls.day : '-'}</td>
+      <td><strong>${ls ? ls.date : '-'}</strong></td>
+      <td><strong>${ls ? ls.time : '-'}</strong></td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('last-seen-wrap').innerHTML = html;
+}
+
+// ===== HOMEWORK RENDER =====
+function renderHomeworks() {
+  const homeworks = GharsStore.get('homeworks', []);
+  const now = Date.now();
+
+  const sent = homeworks.filter(hw => !hw.ended && (!hw.deadline || new Date(hw.deadline).getTime() > now));
+  const ended = homeworks.filter(hw => hw.ended || (hw.deadline && new Date(hw.deadline).getTime() <= now));
+
+  renderHwList('sent-homeworks', sent, false);
+  renderHwList('ended-homeworks', ended, true);
+}
+
+function renderHwList(containerId, list, isExpired) {
+  const el = document.getElementById(containerId);
+  if (!list.length) { el.innerHTML = `<p style="color:var(--gray);font-size:13px;padding:12px 0;">لا توجد واجبات ${isExpired?'منتهية':'مرسلة'}</p>`; return; }
+
+  let html = '';
+  list.forEach(hw => {
+    const now = Date.now();
+    let countdownHtml = '';
+    if (!isExpired && hw.deadline) {
+      const diff = new Date(hw.deadline).getTime() - now;
+      if (diff > 0) {
+        const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
+        countdownHtml = `<span class="countdown-text ${diff < 3600000 ? 'danger' : ''}" id="cd-${hw.id}">⏱️ ${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}</span>`;
+      }
+    } else if (isExpired) {
+      countdownHtml = `<span class="countdown-text expired">⌛ انتهى</span>`;
+    }
+
+    html += `<div class="homework-card ${isExpired ? 'expired' : ''}">
+      <div class="hw-header">
+        <div>
+          <div class="hw-title">${hw.title}</div>
+          <div style="font-size:11px;color:var(--gray);margin-top:3px;">${hw.questions ? hw.questions.length : 0} سؤال${hw.deadline ? ' • ' + toHijri(new Date(hw.deadline)) : ' • وقت مفتوح'}</div>
+        </div>
+        <div class="hw-actions">
+          ${!isExpired ? `<button class="icon-btn edit" onclick="editHomework('${hw.id}')" title="تعديل">✏️</button>` : ''}
+          <button class="icon-btn delete" onclick="deleteHomework('${hw.id}')" title="حذف">🗑️</button>
+        </div>
+      </div>
+      ${countdownHtml}
+    </div>`;
+  });
+  el.innerHTML = html;
+
+  // Start countdowns
+  list.forEach(hw => {
+    if (!isExpired && hw.deadline) {
+      const el2 = document.getElementById('cd-' + hw.id);
+      if (el2) {
+        startCountdown(hw.deadline, el2, () => {
+          endHomework(hw.id);
+          renderHomeworks();
+        });
+      }
+    }
+  });
+}
+
+function endHomework(hwId) {
+  const homeworks = GharsStore.get('homeworks', []);
+  const hw = homeworks.find(h => h.id === hwId);
+  if (hw) { hw.ended = true; GharsStore.set('homeworks', homeworks); }
+}
+
+function deleteHomework(hwId) {
+  confirmAction('حذف الواجب', 'هل أنت متأكد من حذف هذا الواجب نهائياً؟', '🗑️', () => {
+    let homeworks = GharsStore.get('homeworks', []);
+    homeworks = homeworks.filter(h => h.id !== hwId);
+    GharsStore.set('homeworks', homeworks);
+    // Remove submissions
+    const subs = GharsStore.get('hw_submissions', {});
+    delete subs[hwId];
+    GharsStore.set('hw_submissions', subs);
+    renderHomeworks();
+    showToast('تم حذف الواجب', 'success');
+  });
+}
+
+function confirmClearHomeworks() {
+  confirmAction('حذف جميع الواجبات', 'سيتم حذف جميع الواجبات المسجلة نهائياً', '🗑️', () => {
+    GharsStore.set('homeworks', []);
+    GharsStore.set('hw_submissions', {});
+    renderHomeworks();
+    showToast('تم حذف جميع الواجبات', 'success');
+  });
+}
+
+function editHomework(hwId) {
+  editingHwId = hwId;
+  showPage('add-homework');
+}
+
+// ===== ADD HOMEWORK FORM =====
+let questions = [];
+
+function renderAddHomeworkForm() {
+  questions = [];
+  if (editingHwId) {
+    const hws = GharsStore.get('homeworks', []);
+    const hw = hws.find(h => h.id === editingHwId);
+    if (hw) {
+      document.getElementById('hw-title').value = hw.title;
+      if (hw.deadline) {
+        const d = new Date(hw.deadline);
+        document.getElementById('hw-deadline-date').value = d.toISOString().split('T')[0];
+        document.getElementById('hw-deadline-time').value = d.toTimeString().slice(0,5);
+      }
+      if (hw.timerMinutes) document.getElementById('hw-timer-min').value = hw.timerMinutes;
+      questions = JSON.parse(JSON.stringify(hw.questions || []));
+    }
+  } else {
+    editingHwId = null;
+    document.getElementById('hw-title').value = '';
+    document.getElementById('hw-deadline-date').value = '';
+    document.getElementById('hw-deadline-time').value = '';
+    document.getElementById('hw-timer-min').value = '';
+    questions = [];
+    addQuestion();
+  }
+  renderQuestions();
+}
+
+function addQuestion() {
+  questions.push({ id: genId(), text: '', choices: [{id:genId(),text:'',correct:false}], score: 1 });
+  renderQuestions();
+}
+
+function removeQuestion(qId) {
+  questions = questions.filter(q => q.id !== qId);
+  renderQuestions();
+}
+
+function renderQuestions() {
+  const container = document.getElementById('questions-container');
+  let html = '';
+  questions.forEach((q, qi) => {
+    html += `<div class="question-builder" id="qb-${q.id}">
+      <div class="qb-header">
+        <span class="qb-num">السؤال ${qi + 1}</span>
+        <button class="icon-btn delete btn-xs" onclick="removeQuestion('${q.id}')">✕</button>
+      </div>
+      <div class="form-row">
+        <input type="text" class="form-input" value="${escHtml(q.text)}" placeholder="اكتب نص السؤال..." onchange="updateQuestion('${q.id}','text',this.value)" style="font-size:14px;">
+      </div>
+      <div id="choices-${q.id}">`;
+
+    q.choices.forEach((c, ci) => {
+      html += `<div class="choice-builder ${c.correct ? 'correct-choice' : ''}" id="cb-${c.id}" onclick="toggleCorrect('${q.id}','${c.id}')">
+        <span style="font-size:14px;">${c.correct ? '✅' : '⬜'}</span>
+        <input type="text" class="cb-text form-input" value="${escHtml(c.text)}" placeholder="اكتب الخيار ${ci+1}..." onclick="event.stopPropagation()" onchange="updateChoice('${q.id}','${c.id}',this.value)" style="border:none;padding:0;font-size:13px;flex:1;background:transparent;">
+        <button class="icon-btn delete btn-xs" onclick="event.stopPropagation();removeChoice('${q.id}','${c.id}')">✕</button>
+      </div>`;
+    });
+
+    html += `</div>
+      <button class="btn btn-xs btn-outline-gold" onclick="addChoice('${q.id}')" style="margin-top:8px;">+ إضافة خيار</button>
+      <div class="score-badge-input">
+        <label>درجة السؤال:</label>
+        <input type="number" value="${q.score}" min="1" onchange="updateQuestion('${q.id}','score',parseInt(this.value)||1)">
+      </div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function updateQuestion(qId, field, value) {
+  const q = questions.find(q => q.id === qId);
+  if (q) q[field] = value;
+}
+
+function addChoice(qId) {
+  const q = questions.find(q => q.id === qId);
+  if (q) { q.choices.push({ id: genId(), text: '', correct: false }); renderQuestions(); }
+}
+
+function removeChoice(qId, cId) {
+  const q = questions.find(q => q.id === qId);
+  if (q && q.choices.length > 1) { q.choices = q.choices.filter(c => c.id !== cId); renderQuestions(); }
+}
+
+function toggleCorrect(qId, cId) {
+  const q = questions.find(q => q.id === qId);
+  if (q) {
+    q.choices.forEach(c => { if (c.id === cId) c.correct = !c.correct; });
+    renderQuestions();
+  }
+}
+
+function updateChoice(qId, cId, value) {
+  const q = questions.find(q => q.id === qId);
+  if (q) { const c = q.choices.find(c => c.id === cId); if (c) c.text = value; }
+}
+
+function publishHomework() {
+  const title = document.getElementById('hw-title').value.trim();
+  if (!title) { showToast('أدخل عنوان الواجب', 'error'); return; }
+  if (!questions.length) { showToast('أضف سؤالاً على الأقل', 'error'); return; }
+  for (let q of questions) {
+    if (!q.text.trim()) { showToast('أكمل نص جميع الأسئلة', 'error'); return; }
+    if (!q.choices.some(c => c.correct)) { showToast('حدد إجابة صحيحة لكل سؤال', 'error'); return; }
+  }
+
+  const dateVal = document.getElementById('hw-deadline-date').value;
+  const timeVal = document.getElementById('hw-deadline-time').value;
+  let deadline = null;
+  if (dateVal && timeVal) deadline = new Date(dateVal + 'T' + timeVal).toISOString();
+
+  const timerMinutes = parseInt(document.getElementById('hw-timer-min').value) || 0;
+  const totalScore = questions.reduce((s, q) => s + q.score, 0);
+
+  const homeworks = GharsStore.get('homeworks', []);
+
+  if (editingHwId) {
+    const hw = homeworks.find(h => h.id === editingHwId);
+    if (hw) { hw.title = title; hw.questions = questions; hw.deadline = deadline; hw.timerMinutes = timerMinutes; hw.totalScore = totalScore; }
+    GharsStore.set('homeworks', homeworks);
+    showToast('تم تعديل الواجب بنجاح', 'success');
+    editingHwId = null;
+    showPage('homework');
+  } else {
+    const newHw = { id: genId(), title, questions, deadline, timerMinutes, totalScore, ended: false, createdAt: new Date().toISOString() };
+    homeworks.push(newHw);
+    GharsStore.set('homeworks', homeworks);
+    openModal('modal-hw-success');
+  }
+}
+
+// ===== SHOW ANSWERS =====
+function showAnswersPage(hwId, studentId, backPage) {
+  hwAnswersBackPage = backPage || 'home';
+  const homeworks = GharsStore.get('homeworks', []);
+  const students = GharsStore.get('students', []);
+  const submissions = GharsStore.get('hw_submissions', {});
+  const hw = homeworks.find(h => h.id === hwId);
+  const student = students.find(s => s.id === studentId);
+  const sub = (submissions[hwId] || {})[studentId];
+
+  if (!hw || !sub) { showToast('لا توجد بيانات', 'error'); return; }
+
+  document.getElementById('hw-answers-title').textContent = `📋 أجوبة ${student ? student.name : 'الطالب'}`;
+
+  let html = `<div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:20px;">
+    <div class="bottom-stat-card" style="flex:1;min-width:120px;"><span class="bsc-icon">🏆</span><span class="bsc-value">${sub.score}/${hw.totalScore||0}</span><span class="bsc-label">الدرجة النهائية</span></div>
+    <div class="bottom-stat-card" style="flex:1;min-width:120px;"><span class="bsc-icon">✅</span><span class="bsc-value">${sub.correct||0}</span><span class="bsc-label">إجابات صحيحة</span></div>
+    <div class="bottom-stat-card" style="flex:1;min-width:120px;"><span class="bsc-icon">❌</span><span class="bsc-value">${sub.wrong||0}</span><span class="bsc-label">إجابات خاطئة</span></div>
+  </div>`;
+
+  if (sub.answers) {
+    sub.answers.forEach((ans, i) => {
+      const q = hw.questions[i];
+      if (!q) return;
+      const isCorrect = ans.correct;
+      const correctChoice = q.choices.find(c => c.correct);
+      html += `<div class="answer-row ${isCorrect ? 'right-ans' : 'wrong-ans'}">
+        <div class="q-text">${i+1}. ${escHtml(q.text)}</div>
+        <div class="student-ans">إجابة الطالب: ${ans.chosen || '-'}</div>
+        <div class="correct-ans">الإجابة الصحيحة: ${correctChoice ? correctChoice.text : '-'}</div>
+      </div>`;
+    });
+  }
+
+  document.getElementById('hw-answers-content').innerHTML = html;
+  showPage('hw-answers');
+}
+
+function goBackFromAnswers() { showPage(hwAnswersBackPage || 'home'); }
+
+// ===== CHEAT DETAILS =====
+function showCheatDetails(hwId, studentId, backPage) {
+  cheatBackPage = backPage || 'home';
+  const students = GharsStore.get('students', []);
+  const submissions = GharsStore.get('hw_submissions', {});
+  const student = students.find(s => s.id === studentId);
+  const sub = (submissions[hwId] || {})[studentId];
+  if (!sub) return;
+
+  const cheatLogs = sub.cheatLogs || [];
+  const warns = sub.warnings || 0;
+  const label = warns >= 3 ? 'خائن للأمانة 🚩' : 'غاش ⚠️';
+
+  document.getElementById('cheat-details-title').textContent = `🚨 تفاصيل الغش - ${student ? student.name : ''}`;
+
+  let html = `<div style="background:rgba(231,76,60,0.06);border:1px solid rgba(231,76,60,0.2);border-radius:12px;padding:16px;margin-bottom:20px;">
+    <div style="font-weight:800;font-size:16px;color:var(--red);margin-bottom:8px;">${label}</div>
+    <div style="font-size:13px;color:var(--navy);">عدد محاولات الغش: <strong>${warns}</strong></div>
+  </div>
+  <h4 style="margin-bottom:12px;font-size:14px;color:var(--navy);">سجل المحاولات:</h4>`;
+
+  const cheatTypes = {
+    'copy': '📋 تسجيل محاولة غش: قام الطالب بمحاولة نسخ نص السؤال من صفحة الاختبار',
+    'screenshot': '📸 تسجيل محاولة غش: قام الطالب بمحاولة تصوير شاشة الاختبار',
+    'exit': '🚪 تسجيل محاولة غش: قام الطالب بمغادرة صفحة الاختبار دون إذن',
+    'blur': '🔍 تسجيل محاولة غش: قام الطالب بتحويل التركيز عن صفحة الاختبار',
+    'tab': '📑 تسجيل محاولة غش: قام الطالب بفتح تبويب أو نافذة أخرى أثناء الاختبار'
+  };
+
+  if (!cheatLogs.length) {
+    for (let i=0; i<warns; i++) {
+      html += `<div class="cheat-log-item"><span class="cheat-icon">⚠️</span> محاولة غش (${i+1}): سجلت تلقائياً</div>`;
+    }
+  } else {
+    cheatLogs.forEach((log, i) => {
+      const desc = cheatTypes[log.type] || `⚠️ تسجيل محاولة غش (${log.type || 'غير محدد'})`;
+      html += `<div class="cheat-log-item"><span class="cheat-icon">⚠️</span> ${desc}</div>`;
+    });
+  }
+
+  html += `<div style="text-align:center;margin-top:20px;">
+    <button class="btn btn-outline-gold btn-sm" onclick="showAnswersPage('${hwId}','${studentId}','cheat-details')">📋 عرض الأجوبة</button>
+  </div>`;
+
+  document.getElementById('cheat-details-content').innerHTML = html;
+  showPage('cheat-details');
+}
+
+function goBackFromCheat() { showPage(cheatBackPage || 'home'); }
+
+// ===== STUDENTS =====
+let tempCreds = null;
+
+function renderStudents() {
+  const students = GharsStore.get('students', []);
+  const groups = GharsStore.get('groups', []);
+  const el = document.getElementById('students-list');
+
+  if (!students.length) { el.innerHTML = '<p style="color:var(--gray);padding:16px;text-align:center;">لا يوجد طلاب مسجلون</p>'; return; }
+
+  let html = '<div class="table-wrap"><table><thead><tr><th>#</th><th>اسم الطالب</th><th>المجموعة</th><th>الإجراءات</th></tr></thead><tbody>';
+  students.forEach((s, i) => {
+    const group = groups.find(g => g.id === s.groupId);
+    html += `<tr>
+      <td style="color:var(--gray);font-size:12px">${i+1}</td>
+      <td style="font-weight:700">${escHtml(s.name)}</td>
+      <td>${group ? `<span class="badge badge-navy">${escHtml(group.name)}</span>` : '<span class="badge badge-gray">غير محدد</span>'}</td>
+      <td>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <button class="icon-btn view" title="عرض المعلومات" onclick="viewStudentInfo('${s.id}')">👁️</button>
+          <button class="icon-btn copy" title="نسخ المعلومات" onclick="copyStudentInfo('${s.id}')">📋</button>
+          <button class="icon-btn delete" title="حذف" onclick="deleteStudent('${s.id}')">🗑️</button>
+        </div>
+      </td>
+    </tr>`;
+  });
+  html += '</tbody></table></div>';
+  el.innerHTML = html;
+}
+
+function openAddStudentModal() {
+  const groups = GharsStore.get('groups', []);
+  const sel = document.getElementById('new-student-group');
+  sel.innerHTML = '<option value="">-- اختر مجموعة --</option>';
+  groups.forEach(g => { sel.innerHTML += `<option value="${g.id}">${g.name}</option>`; });
+  regenCreds();
+  openModal('modal-add-student');
+}
+
+function regenCreds() {
+  tempCreds = generateCredentials();
+  document.getElementById('gen-username').textContent = tempCreds.username;
+  document.getElementById('gen-password').textContent = tempCreds.password;
+}
+
+document.getElementById('modal-add-student').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('modal-add-student')) closeModal('modal-add-student');
+});
+
+// Override the add student button
+document.querySelector('[onclick="openModal(\'modal-add-student\')"]').onclick = function() { openAddStudentModal(); };
+
+function saveNewStudent() {
+  const name = document.getElementById('new-student-name').value.trim();
+  if (!name) { showToast('أدخل اسم الطالب', 'error'); return; }
+  if (!tempCreds) { regenCreds(); }
+  const groupId = document.getElementById('new-student-group').value;
+  const student = {
+    id: genId(),
+    name,
+    username: tempCreds.username,
+    password: tempCreds.password,
+    groupId: groupId || null
+  };
+  const students = GharsStore.get('students', []);
+  students.push(student);
+  GharsStore.set('students', students);
+  closeModal('modal-add-student');
+  document.getElementById('new-student-name').value = '';
+  renderStudents();
+  showToast('تم إضافة الطالب بنجاح', 'success');
+  tempCreds = null;
+}
+
+function viewStudentInfo(studentId) {
+  const students = GharsStore.get('students', []);
+  const groups = GharsStore.get('groups', []);
+  const s = students.find(s => s.id === studentId);
+  if (!s) return;
+  const group = groups.find(g => g.id === s.groupId);
+
+  document.getElementById('student-info-content').innerHTML = `
+    <div style="background:var(--gray-light);border-radius:12px;padding:20px;">
+      <div style="display:grid;gap:12px;">
+        <div><span style="font-size:11px;color:var(--gray);font-weight:600;">اسم الطالب</span><div style="font-weight:800;font-size:16px;color:var(--navy);margin-top:3px;">${escHtml(s.name)}</div></div>
+        <div><span style="font-size:11px;color:var(--gray);font-weight:600;">اسم المستخدم</span><div style="font-weight:700;font-family:monospace;color:var(--blue);margin-top:3px;direction:ltr;text-align:right;">${s.username}</div></div>
+        <div><span style="font-size:11px;color:var(--gray);font-weight:600;">كلمة المرور</span><div style="font-weight:700;font-family:monospace;color:var(--navy);margin-top:3px;direction:ltr;text-align:right;">${s.password}</div></div>
+        <div><span style="font-size:11px;color:var(--gray);font-weight:600;">المجموعة</span><div style="font-weight:700;color:var(--navy);margin-top:3px;">${group ? group.name : 'غير محدد'}</div></div>
+      </div>
+    </div>`;
+  openModal('modal-student-info');
+}
+
+async function copyStudentInfo(studentId) {
+  const students = GharsStore.get('students', []);
+  const groups = GharsStore.get('groups', []);
+  const s = students.find(s => s.id === studentId);
+  if (!s) return;
+  const group = groups.find(g => g.id === s.groupId);
+  const text = `اسم الطالب: ${s.name}\nاسم المستخدم: ${s.username}\nكلمة المرور: ${s.password}\nالمجموعة: ${group ? group.name : 'غير محدد'}`;
+  const ok = await copyToClipboard(text);
+  showToast(ok ? '✅ تم نسخ المعلومات' : '❌ فشل النسخ', ok ? 'success' : 'error');
+}
+
+function deleteStudent(studentId) {
+  confirmAction('حذف الطالب', 'سيتم حذف هذا الطالب وجميع بياناته نهائياً', '🗑️', () => {
+    let students = GharsStore.get('students', []);
+    students = students.filter(s => s.id !== studentId);
+    GharsStore.set('students', students);
+    renderStudents();
+    showToast('تم حذف الطالب', 'success');
+  });
+}
+
+function confirmClearStudents() {
+  confirmAction('حذف جميع الطلاب', 'سيتم حذف جميع الطلاب وبياناتهم نهائياً', '🗑️', () => {
+    GharsStore.set('students', []);
+    renderStudents();
+    showToast('تم حذف جميع الطلاب', 'success');
+  });
+}
+
+// ===== MEETINGS =====
+let currentMeetingAttId = null;
+let tempAttData = {};
+
+function renderMeetings() {
+  const meetings = GharsStore.get('meetings', []);
+  const el = document.getElementById('meetings-list');
+  if (!meetings.length) { el.innerHTML = '<p style="color:var(--gray);padding:16px;text-align:center;">لا توجد لقاءات مسجلة</p>'; return; }
+
+  const now = Date.now();
+  // Sort by date
+  const sorted = [...meetings].sort((a,b) => new Date(a.datetime) - new Date(b.datetime));
+
+  let html = '';
+  sorted.forEach(m => {
+    const d = new Date(m.datetime);
+    const isPast = d.getTime() < now;
+    const dayHijri = toHijri(d);
+    html += `<div class="meeting-card ${isPast ? 'opacity:0.7' : ''}">
+      <div class="meeting-date">
+        <div class="md-day">${getDayName(d)}</div>
+        <div class="md-month" style="font-size:9px;">${dayHijri.split(' ').slice(0,2).join(' ')}</div>
+      </div>
+      <div class="meeting-info">
+        <div class="meeting-title">${escHtml(m.title || 'لقاء بدون عنوان')}</div>
+        <div class="meeting-time">📅 ${dayHijri} • ${formatTime(d)}</div>
+      </div>
+      <div class="meeting-actions">
+        <button class="icon-btn" title="تسجيل حضور" onclick="openAttModal('${m.id}')">📋</button>
+        <button class="icon-btn edit" title="تعديل" onclick="editMeeting('${m.id}')">✏️</button>
+        <button class="icon-btn delete" title="حذف" onclick="deleteMeeting('${m.id}')">🗑️</button>
+      </div>
+    </div>`;
+  });
+  el.innerHTML = html;
+}
+
+let editMeetingId = null;
+
+function saveMeeting() {
+  const title = document.getElementById('meeting-title-input').value.trim();
+  const dateVal = document.getElementById('meeting-date').value;
+  const timeVal = document.getElementById('meeting-time').value;
+  if (!dateVal || !timeVal) { showToast('حدد التاريخ والوقت', 'error'); return; }
+  const datetime = new Date(dateVal + 'T' + timeVal).toISOString();
+  const meetings = GharsStore.get('meetings', []);
+
+  if (editMeetingId) {
+    const m = meetings.find(m => m.id === editMeetingId);
+    if (m) { m.title = title; m.datetime = datetime; }
+    editMeetingId = null;
+  } else {
+    meetings.push({ id: genId(), title: title || 'لقاء جديد', datetime });
+  }
+  GharsStore.set('meetings', meetings);
+  // Set as next meeting (latest future meeting)
+  const futureMeetings = meetings.filter(m => new Date(m.datetime).getTime() > Date.now());
+  if (futureMeetings.length) {
+    const next = futureMeetings.sort((a,b) => new Date(a.datetime) - new Date(b.datetime))[0];
+    GharsStore.set('next_meeting', next);
+  }
+  showToast('تم حفظ اللقاء', 'success');
+  document.getElementById('meeting-title-input').value = '';
+  document.getElementById('meeting-date').value = '';
+  document.getElementById('meeting-time').value = '';
+  document.getElementById('meeting-save-btn').textContent = '💾 حفظ';
+  showPage('meetings');
+  startMeetingCountdown();
+}
+
+function editMeeting(meetingId) {
+  const meetings = GharsStore.get('meetings', []);
+  const m = meetings.find(m => m.id === meetingId);
+  if (!m) return;
+  editMeetingId = meetingId;
+  const d = new Date(m.datetime);
+  document.getElementById('meeting-title-input').value = m.title || '';
+  document.getElementById('meeting-date').value = d.toISOString().split('T')[0];
+  document.getElementById('meeting-time').value = d.toTimeString().slice(0,5);
+  document.getElementById('meeting-save-btn').textContent = '✏️ تعديل';
+  showPage('add-meeting');
+}
+
+function deleteMeeting(meetingId) {
+  confirmAction('حذف اللقاء', 'سيتم حذف هذا اللقاء وجميع بيانات الحضور المرتبطة به', '🗑️', () => {
+    let meetings = GharsStore.get('meetings', []);
+    const m = meetings.find(m => m.id === meetingId);
+    meetings = meetings.filter(m => m.id !== meetingId);
+    GharsStore.set('meetings', meetings);
+    // Remove attendance records for this meeting
+    const att = GharsStore.get('attendance', {});
+    Object.keys(att).forEach(sid => {
+      att[sid] = (att[sid] || []).filter(r => r.meetingId !== meetingId);
+    });
+    GharsStore.set('attendance', att);
+    // Update next meeting
+    const future = meetings.filter(m => new Date(m.datetime).getTime() > Date.now());
+    GharsStore.set('next_meeting', future.length ? future.sort((a,b) => new Date(a.datetime)-new Date(b.datetime))[0] : null);
+    renderMeetings();
+    startMeetingCountdown();
+    showToast('تم حذف اللقاء', 'success');
+  });
+}
+
+function confirmClearMeetings() {
+  confirmAction('حذف جميع اللقاءات', 'سيتم حذف جميع اللقاءات وبيانات الحضور', '🗑️', () => {
+    GharsStore.set('meetings', []);
+    GharsStore.set('attendance', {});
+    GharsStore.set('next_meeting', null);
+    renderMeetings();
+    startMeetingCountdown();
+    showToast('تم حذف جميع اللقاءات', 'success');
+  });
+}
+
+function openAttModal(meetingId) {
+  currentMeetingAttId = meetingId;
+  tempAttData = {};
+  const students = GharsStore.get('students', []);
+  const attendance = GharsStore.get('attendance', {});
+
+  let html = '';
+  students.forEach(s => {
+    const existing = (attendance[s.id] || []).find(r => r.meetingId === meetingId);
+    const status = existing ? existing.status : null;
+    html += `<div class="student-att-item">
+      <span style="font-weight:600;font-size:14px;">${escHtml(s.name)}</span>
+      <div class="att-btn-group">
+        <button class="att-btn present ${status==='present'?'sel':''}" onclick="setAttStatus(this,'${s.id}','present')">حاضر</button>
+        <button class="att-btn absent ${status==='absent'?'sel':''}" onclick="setAttStatus(this,'${s.id}','absent')">غائب</button>
+        <button class="att-btn excused ${status==='excused'?'sel':''}" onclick="setAttStatus(this,'${s.id}','excused')">مستأذن</button>
+      </div>
+    </div>`;
+    if (status) tempAttData[s.id] = status;
+  });
+
+  document.getElementById('modal-att-list').innerHTML = html || '<p style="color:var(--gray);padding:16px;text-align:center;">لا يوجد طلاب</p>';
+  openModal('modal-attendance');
+}
+
+function setAttStatus(btn, studentId, status) {
+  // Clear siblings
+  const group = btn.closest('.att-btn-group');
+  group.querySelectorAll('.att-btn').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  tempAttData[studentId] = status;
+}
+
+function saveAttendanceFromModal() {
+  const meetings = GharsStore.get('meetings', []);
+  const m = meetings.find(m => m.id === currentMeetingAttId);
+  const att = GharsStore.get('attendance', {});
+  const now = new Date();
+
+  Object.entries(tempAttData).forEach(([sid, status]) => {
+    if (!att[sid]) att[sid] = [];
+    const existing = att[sid].findIndex(r => r.meetingId === currentMeetingAttId);
+    const record = {
+      meetingId: currentMeetingAttId,
+      status,
+      date: toHijri(now),
+      day: getDayName(now),
+      time: formatTime(now)
+    };
+    if (existing >= 0) att[sid][existing] = record;
+    else att[sid].push(record);
+  });
+  GharsStore.set('attendance', att);
+  closeModal('modal-attendance');
+  showToast('تم حفظ الحضور', 'success');
+}
+
+// ===== INITIATIVES =====
+function renderInitiatives() {
+  const students = GharsStore.get('students', []);
+  const initiatives = GharsStore.get('initiatives', {});
+  const el = document.getElementById('initiatives-list');
+
+  if (!students.length) { el.innerHTML = '<p style="color:var(--gray);padding:16px;text-align:center;">لا يوجد طلاب مسجلون</p>'; return; }
+
+  let html = '';
+  students.forEach(s => {
+    const data = initiatives[s.id] || { total: 0, attendance: 0, tasks: 0, initiative: 0, discipline: 0 };
+    html += `<div class="initiative-row">
+      <div class="initiative-header">
+        <span class="initiative-name">${escHtml(s.name)}</span>
+        <span class="initiative-total" onclick="showInitDetails('${s.id}')">${data.total}</span>
+      </div>
+      <div class="initiative-inputs">
+        <div class="init-input-group"><label>الحضور</label><input type="number" min="0" value="${data.attendance||0}" data-sid="${s.id}" data-field="attendance" placeholder="0"></div>
+        <div class="init-input-group"><label>إنجاز المهام</label><input type="number" min="0" value="${data.tasks||0}" data-sid="${s.id}" data-field="tasks" placeholder="0"></div>
+        <div class="init-input-group"><label>المبادرة</label><input type="number" min="0" value="${data.initiative||0}" data-sid="${s.id}" data-field="initiative" placeholder="0"></div>
+        <div class="init-input-group"><label>الانضباط</label><input type="number" min="0" value="${data.discipline||0}" data-sid="${s.id}" data-field="discipline" placeholder="0"></div>
+      </div>
+    </div>`;
+  });
+  el.innerHTML = html;
+}
+
+function saveInitiatives() {
+  const initiatives = GharsStore.get('initiatives', {});
+  document.querySelectorAll('#initiatives-list input[data-sid]').forEach(input => {
+    const sid = input.dataset.sid;
+    const field = input.dataset.field;
+    if (!initiatives[sid]) initiatives[sid] = { total: 0, attendance: 0, tasks: 0, initiative: 0, discipline: 0 };
+    initiatives[sid][field] = parseInt(input.value) || 0;
+  });
+  // Calculate totals
+  Object.keys(initiatives).forEach(sid => {
+    const d = initiatives[sid];
+    d.total = (d.attendance||0) + (d.tasks||0) + (d.initiative||0) + (d.discipline||0);
+    d.updatedAt = new Date().toISOString();
+    d.updatedDay = getDayName();
+  });
+  GharsStore.set('initiatives', initiatives);
+  renderInitiatives();
+  showToast('تم حفظ النقاط', 'success');
+}
+
+function confirmClearInitiatives() {
+  confirmAction('مسح النقاط', 'سيتم مسح جميع نقاط المبادرات', '🗑️', () => {
+    const students = GharsStore.get('students', []);
+    const initiatives = {};
+    students.forEach(s => { initiatives[s.id] = { total:0, attendance:0, tasks:0, initiative:0, discipline:0 }; });
+    GharsStore.set('initiatives', initiatives);
+    renderInitiatives();
+    showToast('تم مسح النقاط', 'success');
+  });
+}
+
+function showInitDetails(studentId) {
+  const students = GharsStore.get('students', []);
+  const initiatives = GharsStore.get('initiatives', {});
+  const s = students.find(s => s.id === studentId);
+  const data = initiatives[studentId] || {};
+  if (!s) return;
+  document.getElementById('init-details-title').textContent = `📊 نقاط ${s.name}`;
+  document.getElementById('init-details-content').innerHTML = `
+    <table><thead><tr><th>التصنيف</th><th>النقاط</th></tr></thead><tbody>
+      <tr><td>الحضور</td><td><strong>${data.attendance||0}</strong></td></tr>
+      <tr><td>إنجاز المهام</td><td><strong>${data.tasks||0}</strong></td></tr>
+      <tr><td>المبادرة</td><td><strong>${data.initiative||0}</strong></td></tr>
+      <tr><td>الانضباط</td><td><strong>${data.discipline||0}</strong></td></tr>
+      <tr style="background:rgba(201,162,39,0.06)"><td><strong>الإجمالي</strong></td><td><strong style="color:var(--gold-dark)">${data.total||0}</strong></td></tr>
+    </tbody></table>
+    ${data.updatedAt ? `<p style="font-size:11px;color:var(--gray);margin-top:10px;">آخر تحديث: ${data.updatedDay} - ${toHijri(new Date(data.updatedAt))}</p>` : ''}
+  `;
+  openModal('modal-init-details');
+}
+
+// ===== MEMORIZATION =====
+function renderMemorization() {
+  const fixed = GharsStore.get('memo_fixed', 0);
+  const scores = GharsStore.get('memo_scores', {});
+  const students = GharsStore.get('students', []);
+
+  document.getElementById('memo-fixed-display').textContent = fixed;
+
+  if (fixed > 0) {
+    document.getElementById('memo-fixed-edit-area').style.display = 'none';
+    document.getElementById('memo-fixed-toggle').style.display = 'inline-flex';
+    document.getElementById('memo-fixed-toggle').textContent = '✏️ تعديل';
+  } else {
+    document.getElementById('memo-fixed-edit-area').style.display = 'block';
+    document.getElementById('memo-fixed-toggle').style.display = 'none';
+  }
+
+  if (!students.length) { document.getElementById('memo-students-list').innerHTML = '<p style="color:var(--gray);padding:16px;text-align:center;">لا يوجد طلاب</p>'; return; }
+
+  let html = '';
+  students.forEach(s => {
+    const sc = scores[s.id] || 0;
+    html += `<div class="memo-student-row">
+      <span class="memo-student-name">${escHtml(s.name)}</span>
+      <input type="number" class="memo-input" value="${sc}" data-sid="${s.id}" min="0" max="${fixed||999}" placeholder="0">
+      ${fixed > 0 ? `<span class="memo-score" style="font-size:11px;min-width:60px;text-align:center;">من ${fixed}</span>` : ''}
+    </div>`;
+  });
+  document.getElementById('memo-students-list').innerHTML = html;
+}
+
+function saveMemoFixed() {
+  const val = parseInt(document.getElementById('memo-fixed-input').value);
+  if (isNaN(val) || val < 0) { showToast('أدخل رقماً صحيحاً', 'error'); return; }
+  GharsStore.set('memo_fixed', val);
+  document.getElementById('memo-fixed-input').value = '';
+  renderMemorization();
+  showToast('تم حفظ المقرر الثابت', 'success');
+}
+
+function toggleMemoFixed() {
+  const editArea = document.getElementById('memo-fixed-edit-area');
+  const toggleBtn = document.getElementById('memo-fixed-toggle');
+  if (editArea.style.display === 'none') {
+    editArea.style.display = 'block';
+    toggleBtn.textContent = '🙈 إخفاء';
+    const fixed = GharsStore.get('memo_fixed', 0);
+    document.getElementById('memo-fixed-input').value = fixed;
+    document.getElementById('memo-fixed-btn').textContent = '✏️ تعديل';
+  } else {
+    editArea.style.display = 'none';
+    toggleBtn.textContent = '✏️ تعديل';
+  }
+}
+
+function saveMemoScores() {
+  const scores = GharsStore.get('memo_scores', {});
+  document.querySelectorAll('#memo-students-list input.memo-input').forEach(inp => {
+    scores[inp.dataset.sid] = parseInt(inp.value) || 0;
+  });
+  GharsStore.set('memo_scores', scores);
+  renderMemorization();
+  showToast('تم حفظ التقييمات', 'success');
+}
+
+function confirmClearMemo() {
+  confirmAction('مسح التقييمات', 'سيتم مسح جميع درجات التسميع', '🗑️', () => {
+    GharsStore.set('memo_scores', {});
+    renderMemorization();
+    showToast('تم مسح التقييمات', 'success');
+  });
+}
+
+// ===== GROUPS =====
+function renderGroups() {
+  const groups = GharsStore.get('groups', []);
+  const groupPts = GharsStore.get('group_points', {});
+  const el = document.getElementById('groups-list');
+  if (!groups.length) { el.innerHTML = '<p style="color:var(--gray);padding:16px;text-align:center;">لا توجد مجموعات مسجلة</p>'; return; }
+
+  let html = '';
+  groups.forEach(g => {
+    const pts = groupPts[g.id] || 0;
+    html += `<div class="group-card">
+      <div class="group-name">🏆 ${escHtml(g.name)}</div>
+      <div class="group-points">${pts} <span style="font-size:12px;color:var(--gray);font-weight:400;">نقطة</span></div>
+      <div class="group-actions">
+        <button class="btn btn-xs btn-outline-gold" onclick="showGroupStudents('${g.id}')">👥 الطلاب</button>
+        <button class="btn btn-xs btn-gold" onclick="showAddGroupPoints('${g.id}')">➕ نقاط</button>
+        <button class="icon-btn delete" onclick="deleteGroup('${g.id}')">🗑️</button>
+      </div>
+    </div>`;
+  });
+  el.innerHTML = html;
+}
+
+function saveNewGroup() {
+  const name = document.getElementById('new-group-name').value.trim();
+  if (!name) { showToast('أدخل اسم المجموعة', 'error'); return; }
+  const groups = GharsStore.get('groups', []);
+  groups.push({ id: genId(), name });
+  GharsStore.set('groups', groups);
+  closeModal('modal-add-group');
+  document.getElementById('new-group-name').value = '';
+  renderGroups();
+  showToast('تم إضافة المجموعة', 'success');
+}
+
+function deleteGroup(groupId) {
+  confirmAction('حذف المجموعة', 'سيتم حذف هذه المجموعة نهائياً', '🗑️', () => {
+    let groups = GharsStore.get('groups', []);
+    groups = groups.filter(g => g.id !== groupId);
+    GharsStore.set('groups', groups);
+    const pts = GharsStore.get('group_points', {});
+    delete pts[groupId];
+    GharsStore.set('group_points', pts);
+    renderGroups();
+    showToast('تم حذف المجموعة', 'success');
+  });
+}
+
+function showGroupStudents(groupId) {
+  currentGroupId = groupId;
+  const groups = GharsStore.get('groups', []);
+  const students = GharsStore.get('students', []);
+  const g = groups.find(g => g.id === groupId);
+  document.getElementById('group-students-title').textContent = `👥 طلاب ${g ? g.name : 'المجموعة'}`;
+  const groupStudents = students.filter(s => s.groupId === groupId);
+  if (!groupStudents.length) {
+    document.getElementById('group-students-list').innerHTML = '<p style="color:var(--gray);padding:16px;text-align:center;">لا يوجد طلاب في هذه المجموعة</p>';
+  } else {
+    let html = '<div class="table-wrap"><table><thead><tr><th>#</th><th>اسم الطالب</th></tr></thead><tbody>';
+    groupStudents.forEach((s, i) => { html += `<tr><td>${i+1}</td><td style="font-weight:600">${escHtml(s.name)}</td></tr>`; });
+    html += '</tbody></table></div>';
+    document.getElementById('group-students-list').innerHTML = html;
+  }
+  showPage('group-students');
+}
+
+function showAddGroupPoints(groupId) {
+  currentGroupId = groupId;
+  const groups = GharsStore.get('groups', []);
+  const g = groups.find(g => g.id === groupId);
+  const pts = GharsStore.get('group_points', {});
+  document.getElementById('add-points-title').textContent = `➕ إضافة نقاط - ${g ? g.name : ''}`;
+  document.getElementById('group-points-input').value = '';
+  showPage('add-group-points');
+}
+
+function saveGroupPoints() {
+  const pts = parseInt(document.getElementById('group-points-input').value) || 0;
+  const groupPts = GharsStore.get('group_points', {});
+  groupPts[currentGroupId] = (groupPts[currentGroupId] || 0) + pts;
+  GharsStore.set('group_points', groupPts);
+  showToast(`تمت إضافة ${pts} نقطة`, 'success');
+  showPage('groups');
+}
+
+document.getElementById('modal-add-group').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('modal-add-group')) closeModal('modal-add-group');
+});
+
+// ===== SEERAH =====
+function renderSeerah() {
+  const lessons = GharsStore.get('seerah_lessons', []);
+  const el = document.getElementById('seerah-list');
+  if (!lessons.length) { el.innerHTML = '<p style="color:var(--gray);padding:16px;text-align:center;">لا توجد دروس مسجلة</p>'; return; }
+
+  let html = '';
+  lessons.forEach(l => {
+    const comments = GharsStore.get('seerah_comments', {})[l.id] || [];
+    html += `<div class="seerah-card">
+      <div class="seerah-header">
+        <span class="seerah-title">📚 ${escHtml(l.title)}</span>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="btn btn-xs btn-outline-gold" onclick="showSeerahComments('${l.id}')">💬 ${comments.length}</button>
+          <button class="icon-btn edit" onclick="editSeerah('${l.id}')">✏️</button>
+          <button class="icon-btn delete" onclick="deleteSeerah('${l.id}')">🗑️</button>
+        </div>
+      </div>
+      ${l.topic ? `<p style="font-size:13px;color:var(--gray);margin-top:8px;">${escHtml(l.topic.slice(0,100))}${l.topic.length>100?'...':''}</p>` : ''}
+    </div>`;
+  });
+  el.innerHTML = html;
+}
+
+function renderAddSeerahForm() {
+  // Populate homework select
+  const homeworks = GharsStore.get('homeworks', []);
+  const sel = document.getElementById('seerah-hw-select');
+  sel.innerHTML = '<option value="">-- اختر واجباً --</option>';
+  homeworks.filter(h => !h.ended).forEach(hw => { sel.innerHTML += `<option value="${hw.id}">${escHtml(hw.title)}</option>`; });
+
+  if (!editingSeerahId) {
+    document.getElementById('seerah-title').value = '';
+    document.getElementById('seerah-youtube-url').value = '';
+    document.getElementById('seerah-topic').value = '';
+    document.getElementById('seerah-hw-select').value = '';
+    document.getElementById('vt-none').checked = true;
+    toggleVideoType();
+    pendingVideoFile = null;
+    pendingVideoId = null;
+    document.getElementById('video-preview-area').style.display = 'none';
+  }
+}
+
+function toggleVideoType() {
+  const yt = document.querySelector('[name="video-type"]:checked').value;
+  document.getElementById('youtube-input-area').style.display = yt === 'youtube' ? 'block' : 'none';
+  document.getElementById('upload-video-area').style.display = yt === 'upload' ? 'block' : 'none';
+}
+
+function handleVideoFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  pendingVideoFile = file;
+  pendingVideoId = 'video_' + genId();
+  document.getElementById('video-file-name').textContent = file.name;
+  document.getElementById('video-file-size').textContent = (file.size / (1024*1024)).toFixed(1) + ' MB';
+  document.getElementById('video-preview-area').style.display = 'block';
+}
+
+function removeVideoFile() {
+  pendingVideoFile = null;
+  pendingVideoId = null;
+  document.getElementById('video-preview-area').style.display = 'none';
+  document.getElementById('video-file-input').value = '';
+}
+
+async function publishSeerah() {
+  const title = document.getElementById('seerah-title').value.trim();
+  if (!title) { showToast('أدخل عنوان الدرس', 'error'); return; }
+
+  const vt = document.querySelector('[name="video-type"]:checked').value;
+  const topic = document.getElementById('seerah-topic').value.trim();
+  const hwId = document.getElementById('seerah-hw-select').value;
+  const btn = document.getElementById('seerah-submit-btn');
+
+  let videoData = { type: 'none' };
+  if (vt === 'youtube') {
+    const url = document.getElementById('seerah-youtube-url').value.trim();
+    if (!url) { showToast('أدخل رابط يوتيوب', 'error'); return; }
+    videoData = { type: 'youtube', url };
+  } else if (vt === 'upload') {
+    if (!pendingVideoFile) { showToast('اختر مقطع فيديو', 'error'); return; }
+    btn.textContent = '⏳ جارٍ الحفظ...';
+    btn.disabled = true;
+    // Show progress
+    document.getElementById('video-upload-progress').style.display = 'block';
+    try {
+      // Save video to IndexedDB
+      await saveVideoWithProgress(pendingVideoFile, pendingVideoId);
+      videoData = { type: 'upload', videoId: pendingVideoId, fileName: pendingVideoFile.name };
+    } catch (e) {
+      console.error(e);
+      showToast('فشل في حفظ الفيديو', 'error');
+      btn.textContent = '📤 إرسال الدرس';
+      btn.disabled = false;
+      return;
+    }
+    btn.textContent = '📤 إرسال الدرس';
+    btn.disabled = false;
+  }
+
+  const lessons = GharsStore.get('seerah_lessons', []);
+  if (editingSeerahId) {
+    const l = lessons.find(l => l.id === editingSeerahId);
+    if (l) { l.title = title; l.videoData = videoData; l.topic = topic; l.hwId = hwId; }
+    editingSeerahId = null;
+  } else {
+    lessons.push({ id: genId(), title, videoData, topic, hwId, createdAt: new Date().toISOString() });
+  }
+  GharsStore.set('seerah_lessons', lessons);
+  pendingVideoFile = null; pendingVideoId = null;
+  showToast('تم نشر الدرس بنجاح', 'success');
+  showPage('seerah');
+}
+
+async function saveVideoWithProgress(file, videoId) {
+  const progressBar = document.getElementById('video-progress-bar');
+  const progressText = document.getElementById('video-progress-text');
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onprogress = (e) => {
+      if (e.lengthComputable) {
+        const pct = Math.round((e.loaded/e.total)*80);
+        progressBar.style.width = pct + '%';
+        progressText.textContent = `جارٍ القراءة... ${pct}%`;
+      }
+    };
+    reader.onload = async (e) => {
+      try {
+        progressBar.style.width = '90%';
+        progressText.textContent = 'جارٍ الحفظ في القاعدة...';
+        await GharsVideoDB.save(videoId, file);
+        progressBar.style.width = '100%';
+        progressText.textContent = 'تم الحفظ ✓';
+        setTimeout(resolve, 300);
+      } catch(err) { reject(err); }
+    };
+    reader.onerror = reject;
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+function editSeerah(lessonId) {
+  editingSeerahId = lessonId;
+  const lessons = GharsStore.get('seerah_lessons', []);
+  const l = lessons.find(l => l.id === lessonId);
+  if (!l) return;
+  showPage('add-seerah');
+  setTimeout(() => {
+    document.getElementById('seerah-title').value = l.title;
+    document.getElementById('seerah-topic').value = l.topic || '';
+    if (l.hwId) document.getElementById('seerah-hw-select').value = l.hwId;
+    if (l.videoData) {
+      if (l.videoData.type === 'youtube') {
+        document.getElementById('vt-youtube').checked = true;
+        document.getElementById('seerah-youtube-url').value = l.videoData.url || '';
+      } else if (l.videoData.type === 'upload') {
+        document.getElementById('vt-upload').checked = true;
+        document.getElementById('video-file-name').textContent = l.videoData.fileName || 'فيديو محفوظ';
+        document.getElementById('video-file-size').textContent = '';
+        document.getElementById('video-preview-area').style.display = 'block';
+        pendingVideoId = l.videoData.videoId;
+      } else {
+        document.getElementById('vt-none').checked = true;
+      }
+      toggleVideoType();
+    }
+  }, 100);
+}
+
+function deleteSeerah(lessonId) {
+  confirmAction('حذف الدرس', 'سيتم حذف هذا الدرس نهائياً', '🗑️', async () => {
+    let lessons = GharsStore.get('seerah_lessons', []);
+    const l = lessons.find(l => l.id === lessonId);
+    if (l && l.videoData && l.videoData.type === 'upload') {
+      await GharsVideoDB.delete(l.videoData.videoId).catch(() => {});
+    }
+    lessons = lessons.filter(l => l.id !== lessonId);
+    GharsStore.set('seerah_lessons', lessons);
+    const comments = GharsStore.get('seerah_comments', {});
+    delete comments[lessonId];
+    GharsStore.set('seerah_comments', comments);
+    renderSeerah();
+    showToast('تم حذف الدرس', 'success');
+  });
+}
+
+function confirmClearSeerah() {
+  confirmAction('مسح السجل', 'سيتم حذف جميع الدروس نهائياً', '🗑️', async () => {
+    const lessons = GharsStore.get('seerah_lessons', []);
+    for (const l of lessons) {
+      if (l.videoData && l.videoData.type === 'upload') {
+        await GharsVideoDB.delete(l.videoData.videoId).catch(() => {});
+      }
+    }
+    GharsStore.set('seerah_lessons', []);
+    GharsStore.set('seerah_comments', {});
+    renderSeerah();
+    showToast('تم مسح السجل', 'success');
+  });
+}
+
+function showSeerahComments(lessonId) {
+  const lessons = GharsStore.get('seerah_lessons', []);
+  const l = lessons.find(l => l.id === lessonId);
+  const comments = GharsStore.get('seerah_comments', {})[lessonId] || [];
+  document.getElementById('seerah-comments-title').textContent = `💬 تعليقات درس: ${l ? l.title : ''}`;
+  let html = '';
+  if (!comments.length) { html = '<p style="color:var(--gray);padding:16px;text-align:center;">لا توجد تعليقات</p>'; }
+  else {
+    comments.forEach(c => {
+      html += `<div class="comment-item">
+        <div class="comment-student-name">${escHtml(c.studentName)}</div>
+        <div class="comment-text">${escHtml(c.comment)}</div>
+        <div style="font-size:11px;color:var(--gray);margin-top:4px;">${c.date || ''}</div>
+      </div>`;
+    });
+  }
+  document.getElementById('seerah-comments-list').innerHTML = html;
+  showPage('seerah-comments');
+}
+
+// ===== UTILS =====
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showAddHomeworkPage() {
+  editingHwId = null;
+  showPage('add-homework');
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', function(e) {
+    if (e.target === this) {
+      const modalId = this.id;
+      closeModal(modalId);
+    }
+  });
+});
+
+// Initial render
+renderHome();
+startMeetingCountdown();
+</script>
+</body>
+</html>

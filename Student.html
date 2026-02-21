@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>نادي غرس - الطالب</title>
+<link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <span class="sidebar-logo">🌱</span>
+    <div class="sidebar-club-name">نادي غرس</div>
+    <div id="student-name-sidebar" style="color:var(--gray);font-size:11px;margin-top:4px;"></div>
+  </div>
+  <div class="sidebar-nav">
+    <button onclick="showPage('home');closeSidebar()" id="nav-home" class="active"><span class="nav-icon">🏠</span> الصفحة الرئيسية</button>
+    <button onclick="showPage('seerah');closeSidebar()" id="nav-seerah"><span class="nav-icon">🕌</span> درس السيرة</button>
+    <button onclick="showPage('homework');closeSidebar()" id="nav-homework"><span class="nav-icon">📝</span> الواجبات</button>
+  </div>
+  <div class="sidebar-footer">
+    <button class="btn-logout" onclick="GharsAuth.logout()">🚪 تسجيل الخروج</button>
+  </div>
+</nav>
+
+<div class="countdown-banner" id="countdown-banner">
+  <div class="countdown-bar">
+    <span>⏱️</span>
+    <span id="meeting-title-display" style="font-size:11px;color:var(--gray)"></span>
+    <span id="countdown-display">--:--:--</span>
+    <span style="font-size:11px">ثانية</span>
+  </div>
+</div>
+
+<header class="top-bar">
+  <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+  <div class="top-bar-title"><span>🌱</span><span id="top-bar-page-title">الصفحة الرئيسية</span></div>
+  <div class="top-bar-actions"><span style="font-size:12px;color:var(--gold-dark);font-weight:600;" id="student-name-top"></span></div>
+</header>
+
+<main class="main-content">
+
+<!-- HOME -->
+<section class="page-section active" id="page-home">
+  <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap;">
+    <div style="flex:1;min-width:200px;">
+      <div class="student-points-box" onclick="showPointsDetails()">
+        <div class="spb-label">نقاطي</div>
+        <div class="spb-value" id="student-total-points">0</div>
+        <div class="spb-memo-label" onclick="event.stopPropagation();showMemoDetails()">📖 مقرر التسميع ←</div>
+      </div>
+    </div>
+    <div id="top-group-box"></div>
+  </div>
+  <div class="card">
+    <div class="card-title" style="margin-bottom:16px;">📋 سجل حضوري</div>
+    <div id="student-att-records"><p style="color:var(--gray);font-size:13px;text-align:center;padding:16px;">لا توجد سجلات حضور</p></div>
+  </div>
+</section>
+
+<!-- POINTS DETAILS -->
+<section class="page-section" id="page-points-details">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">📊 تفاصيل النقاط</div>
+      <button class="btn btn-gray btn-sm" onclick="showPage('home')">← رجوع</button>
+    </div>
+    <div id="points-details-content"></div>
+  </div>
+</section>
+
+<!-- MEMO DETAILS -->
+<section class="page-section" id="page-memo-details">
+  <div class="card" style="max-width:500px;margin:0 auto;">
+    <div class="card-header">
+      <div class="card-title">📖 مقرر التسميع</div>
+      <button class="btn btn-gray btn-sm" onclick="showPage('home')">← رجوع</button>
+    </div>
+    <div id="memo-details-content"></div>
+  </div>
+</section>
+
+<!-- SEERAH -->
+<section class="page-section" id="page-seerah">
+  <div class="card">
+    <div class="card-title" style="margin-bottom:16px;">🕌 دروس السيرة</div>
+    <div id="student-seerah-list"></div>
+  </div>
+</section>
+
+<!-- VIEW SEERAH -->
+<section class="page-section" id="page-view-seerah">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title" id="view-seerah-title"></div>
+      <button class="btn btn-gray btn-sm" onclick="showPage('seerah')">← رجوع</button>
+    </div>
+    <div id="view-seerah-content"></div>
+  </div>
+</section>
+
+<!-- HOMEWORK -->
+<section class="page-section" id="page-homework">
+  <div class="card">
+    <div class="card-title" style="margin-bottom:16px;">📝 واجباتي</div>
+    <h4 style="color:var(--navy);margin-bottom:12px;font-size:14px;font-weight:700;">📤 الواجبات المرسلة</h4>
+    <div id="student-sent-hw"></div>
+    <div class="section-divider"></div>
+    <h4 style="color:var(--navy);margin-bottom:12px;font-size:14px;font-weight:700;">✅ الواجبات المنتهية</h4>
+    <div id="student-ended-hw"></div>
+  </div>
+</section>
+
+<!-- MY ANSWERS -->
+<section class="page-section" id="page-my-answers">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title" id="my-answers-title">📋 إجاباتي</div>
+      <button class="btn btn-gray btn-sm" onclick="showPage('homework')">← رجوع</button>
+    </div>
+    <div id="my-answers-content"></div>
+  </div>
+</section>
+
+</main>
+
+<!-- QUIZ FULLSCREEN -->
+<div class="quiz-fullscreen" id="quiz-fullscreen">
+  <div style="position:sticky;top:0;z-index:10;background:var(--navy);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;">
+    <div id="quiz-hw-title" style="color:var(--gold);font-weight:800;font-size:15px;"></div>
+    <div style="display:flex;align-items:center;gap:16px;">
+      <div id="quiz-timer-display" style="color:var(--gold);font-size:20px;font-weight:900;font-family:monospace;"></div>
+      <div style="display:flex;gap:6px;" id="quiz-warnings-display"></div>
+    </div>
+  </div>
+  <div id="quiz-content" style="max-width:700px;margin:0 auto;padding:20px;"></div>
+</div>
+
+<!-- QUIZ WARNING MODAL -->
+<div class="modal-overlay" id="modal-quiz-warning">
+  <div class="modal" style="max-width:440px;text-align:center;">
+    <button class="modal-close" onclick="closeModal('modal-quiz-warning')">✕</button>
+    <div style="font-size:48px;margin-bottom:16px;">⚠️</div>
+    <h3 style="color:var(--navy);margin-bottom:12px;">تنبيه مهم قبل بدء الاختبار</h3>
+    <div style="background:rgba(231,76,60,0.06);border:1px solid rgba(231,76,60,0.2);border-radius:12px;padding:16px;margin-bottom:20px;text-align:right;">
+      <p style="font-size:13px;color:#c0392b;line-height:1.8;margin:0;">
+        🚫 يُمنع نسخ أو لصق أي نص من الاختبار<br>
+        🚫 يُمنع تصوير شاشة الاختبار<br>
+        🚫 يُمنع مغادرة صفحة الاختبار أو التبديل بين التطبيقات<br>
+        <br>
+        <strong>⚠️ لديك 3 إنذارات فقط. عند انتهائها سيتم إخراجك تلقائياً بدرجة صفر.</strong>
+      </p>
+    </div>
+    <button class="btn btn-gold" onclick="startQuizConfirmed()">✅ فهمت، ابدأ الاختبار</button>
+  </div>
+</div>
+
+<footer class="site-footer">جميع الحقوق محفوظة لـ نادي غرس © 2026</footer>
+
+<script src="js/storage.js"></script>
+<script>
+initDefaults();
+const sess = GharsAuth.getSession();
+if (!sess || sess.type !== 'student') { window.location.href = 'index.html'; }
+
+const studentId = sess.id;
+const studentName = sess.name;
+document.getElementById('student-name-sidebar').textContent = studentName;
+document.getElementById('student-name-top').textContent = studentName;
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebar-overlay').classList.toggle('active');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('active');
+}
+
+const pageTitles = {
+  'home':'الصفحة الرئيسية','seerah':'درس السيرة','homework':'الواجبات',
+  'view-seerah':'مشاهدة الدرس','points-details':'تفاصيل النقاط',
+  'memo-details':'مقرر التسميع','my-answers':'إجاباتي'
+};
+
+function showPage(name) {
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('page-' + name);
+  if (el) { el.classList.add('active'); }
+  sessionStorage.setItem('student_page', name);
+  document.getElementById('top-bar-page-title').textContent = pageTitles[name] || name;
+  document.querySelectorAll('.sidebar-nav button').forEach(b => b.classList.remove('active'));
+  const navMap = { home:'nav-home', seerah:'nav-seerah', 'view-seerah':'nav-seerah',
+    homework:'nav-homework', 'my-answers':'nav-homework',
+    'points-details':'nav-home','memo-details':'nav-home' };
+  const nid = navMap[name];
+  if (nid) { const nb = document.getElementById(nid); if(nb) nb.classList.add('active'); }
+
+  if (name === 'home') renderStudentHome();
+  else if (name === 'seerah') renderStudentSeerah();
+  else if (name === 'homework') renderStudentHomework();
+  window.scrollTo(0, 0);
+}
+
+let countdownInterval = null;
+function startMeetingCountdown() {
+  const meeting = GharsStore.get('next_meeting');
+  const banner = document.getElementById('countdown-banner');
+  if (countdownInterval) clearInterval(countdownInterval);
+  if (!meeting) { banner.classList.remove('show'); return; }
+  banner.classList.add('show');
+  document.getElementById('meeting-title-display').textContent = meeting.title ? meeting.title + ' • ' : '';
+  countdownInterval = startCountdown(meeting.datetime, document.getElementById('countdown-display'), () => { banner.classList.remove('show'); });
+}
+
+function renderStudentHome() {
+  const initiatives = GharsStore.get('initiatives', {});
+  const data = initiatives[studentId] || {};
+  document.getElementById('student-total-points').textContent = data.total || 0;
+
+  const groups = GharsStore.get('groups', []);
+  const groupPts = GharsStore.get('group_points', {});
+  const topGroupBox = document.getElementById('top-group-box');
+  if (groups.length) {
+    const topGroup = [...groups].sort((a,b) => (groupPts[b.id]||0) - (groupPts[a.id]||0))[0];
+    topGroupBox.innerHTML = `<div class="group-top-box"><div class="gtb-label">🏆 المجموعة المتصدرة</div><div class="gtb-name">${escHtml(topGroup.name)}</div><div class="gtb-pts">${groupPts[topGroup.id]||0} نقطة</div></div>`;
+  } else {
+    topGroupBox.innerHTML = '';
+  }
+
+  const att = GharsStore.get('attendance', {});
+  const records = att[studentId] || [];
+  const el = document.getElementById('student-att-records');
+  if (!records.length) {
+    el.innerHTML = '<p style="color:var(--gray);font-size:13px;text-align:center;padding:16px;">لا توجد سجلات حضور</p>';
+  } else {
+    let html = '';
+    records.forEach(r => {
+      const lbl = {present:'حاضر',absent:'غائب',excused:'مستأذن'}[r.status] || r.status;
+      const cls = {present:'att-present',absent:'att-absent',excused:'att-excused'}[r.status] || '';
+      html += `<div class="att-record-item">
+        <div><div class="att-record-day">${r.day||''}</div><div class="att-record-date">${r.date||''}</div></div>
+        <span class="${cls}">${lbl}</span>
+      </div>`;
+    });
+    el.innerHTML = html;
+  }
+  startMeetingCountdown();
+}
+
+function showPointsDetails() {
+  const d = (GharsStore.get('initiatives', {}))[studentId] || {};
+  document.getElementById('points-details-content').innerHTML = `
+    <div class="table-wrap"><table><thead><tr><th>التصنيف</th><th>النقاط</th></tr></thead><tbody>
+      <tr><td>الحضور</td><td><strong>${d.attendance||0}</strong></td></tr>
+      <tr><td>إنجاز المهام</td><td><strong>${d.tasks||0}</strong></td></tr>
+      <tr><td>المبادرة</td><td><strong>${d.initiative||0}</strong></td></tr>
+      <tr><td>الانضباط</td><td><strong>${d.discipline||0}</strong></td></tr>
+      <tr style="background:rgba(201,162,39,0.06)"><td><strong>الإجمالي</strong></td><td><strong style="color:var(--gold-dark)">${d.total||0}</strong></td></tr>
+    </tbody></table></div>
+    ${d.updatedAt ? `<p style="font-size:12px;color:var(--gray);margin-top:12px;"><strong>${d.updatedDay||''} - ${toHijri(new Date(d.updatedAt))}</strong></p>` : ''}`;
+  showPage('points-details');
+}
+
+function showMemoDetails() {
+  const fixed = GharsStore.get('memo_fixed', 0);
+  const myScore = (GharsStore.get('memo_scores', {}))[studentId] || 0;
+  const pct = fixed > 0 ? Math.min(100, Math.round((myScore / fixed) * 100)) : 0;
+  const remaining = Math.max(0, fixed - myScore);
+  const r = 54, circ = 2 * Math.PI * r;
+  const offset = circ - (pct / 100) * circ;
+  document.getElementById('memo-details-content').innerHTML = `
+    <div style="text-align:center;padding:20px;">
+      <svg width="140" height="140" viewBox="0 0 140 140" style="margin-bottom:16px;">
+        <circle cx="70" cy="70" r="${r}" fill="none" stroke="var(--gray-mid)" stroke-width="10"/>
+        <circle cx="70" cy="70" r="${r}" fill="none" stroke="var(--gold)" stroke-width="10"
+          stroke-dasharray="${circ}" stroke-dashoffset="${offset}"
+          stroke-linecap="round" transform="rotate(-90 70 70)" style="transition:stroke-dashoffset 1s ease"/>
+        <text x="70" y="65" text-anchor="middle" dominant-baseline="middle" font-family="Tajawal" font-size="22" font-weight="900" fill="var(--navy)">${myScore}</text>
+        <text x="70" y="85" text-anchor="middle" dominant-baseline="middle" font-family="Tajawal" font-size="12" fill="var(--gray)">من ${fixed}</text>
+      </svg>
+      <div style="font-size:24px;font-weight:900;color:var(--gold-dark);margin-bottom:6px;">${pct}%</div>
+      <p style="font-size:13px;color:var(--gray);">تم إنجاز <strong style="color:var(--green)">${myScore}</strong> من أصل <strong>${fixed}</strong></p>
+      ${remaining > 0 ? `<p style="font-size:13px;color:var(--orange);margin-top:6px;font-weight:600;">🎯 المتبقي: ${remaining} - استمر!</p>` : '<p style="font-size:14px;color:var(--green);font-weight:800;margin-top:8px;">🎉 أكملت المقرر!</p>'}
+    </div>`;
+  showPage('memo-details');
+}
+
+function renderStudentSeerah() {
+  const lessons = GharsStore.get('seerah_lessons', []);
+  const el = document.getElementById('student-seerah-list');
+  if (!lessons.length) { el.innerHTML = '<p style="color:var(--gray);padding:16px;text-align:center;">لا توجد دروس</p>'; return; }
+  let html = '';
+  lessons.forEach(l => {
+    html += `<div class="seerah-card">
+      <div class="seerah-header">
+        <span class="seerah-title">📚 ${escHtml(l.title)}</span>
+        <button class="btn btn-gold btn-sm" onclick="viewSeerahLesson('${l.id}')">مشاهدة</button>
+      </div>
+    </div>`;
+  });
+  el.innerHTML = html;
+}
+
+async function viewSeerahLesson(lessonId) {
+  const l = (GharsStore.get('seerah_lessons', [])).find(l => l.id === lessonId);
+  if (!l) return;
+  document.getElementById('view-seerah-title').textContent = `📚 ${l.title}`;
+
+  const submissions = GharsStore.get('hw_submissions', {});
+  const homeworks = GharsStore.get('homeworks', []);
+
+  let videoHtml = '';
+  if (l.videoData && l.videoData.type === 'youtube') {
+    videoHtml = `<a href="${l.videoData.url}" target="_blank" class="btn btn-red" style="display:inline-flex;align-items:center;gap:8px;margin-bottom:16px;">▶️ مشاهدة في يوتيوب</a>`;
+  } else if (l.videoData && l.videoData.type === 'upload') {
+    videoHtml = `<div id="video-loading-${lessonId}" style="text-align:center;padding:20px;"><div class="loading-spinner"></div><p style="color:var(--gray);margin-top:8px;">جارٍ تحميل الفيديو...</p></div>`;
+  }
+
+  let hwHtml = '';
+  if (l.hwId) {
+    const hw = homeworks.find(h => h.id === l.hwId);
+    if (hw) {
+      const alreadySolved = (submissions[l.hwId] || {})[studentId];
+      if (alreadySolved) {
+        hwHtml = `<div class="badge badge-green" style="font-size:13px;padding:8px 16px;margin-bottom:16px;display:inline-block;">✅ تم حل الواجب مسبقاً</div>`;
+      } else {
+        hwHtml = `<button class="btn btn-gold" onclick="openQuizWarning('${l.hwId}')" style="margin-bottom:16px;">📝 ابدأ بحل الواجب</button>`;
+      }
+    }
+  }
+
+  document.getElementById('view-seerah-content').innerHTML = `
+    ${videoHtml}
+    ${hwHtml}
+    ${l.topic ? `<div class="card" style="margin-bottom:16px;"><div class="card-title" style="margin-bottom:10px;">📋 موضوع الدرس</div><p style="font-size:14px;line-height:1.8;color:#444;">${escHtml(l.topic)}</p></div>` : ''}
+    <div class="card">
+      <div class="card-title" style="margin-bottom:12px;">💬 ماذا استفدت من الدرس؟</div>
+      <textarea class="form-textarea" id="seerah-comment-input-${lessonId}" placeholder="اكتب تعليقك..." rows="3"></textarea>
+      <div style="text-align:left;margin-top:10px;">
+        <button class="btn btn-gold btn-sm" onclick="sendSeerahComment('${lessonId}')">📤 إرسال</button>
+      </div>
+    </div>`;
+
+  showPage('view-seerah');
+
+  if (l.videoData && l.videoData.type === 'upload' && l.videoData.videoId) {
+    try {
+      const blob = await GharsVideoDB.get(l.videoData.videoId);
+      const loadEl = document.getElementById('video-loading-' + lessonId);
+      if (loadEl && blob) {
+        const url = URL.createObjectURL(blob);
+        loadEl.outerHTML = `<div style="margin-bottom:16px;border-radius:var(--radius);overflow:hidden;background:#000;">
+          <video controls preload="metadata" style="width:100%;max-height:500px;" controlsList="nodownload nofullscreen">
+            <source src="${url}">متصفحك لا يدعم الفيديو
+          </video></div>`;
+      } else if (loadEl) {
+        loadEl.innerHTML = '<p style="color:var(--red);">⚠️ الفيديو غير متاح</p>';
+      }
+    } catch(e) { console.error(e); }
+  }
+}
+
+function sendSeerahComment(lessonId) {
+  const inp = document.getElementById('seerah-comment-input-' + lessonId);
+  if (!inp) return;
+  const text = inp.value.trim();
+  if (!text) { showToast('اكتب تعليقاً أولاً', 'error'); return; }
+  const comments = GharsStore.get('seerah_comments', {});
+  if (!comments[lessonId]) comments[lessonId] = [];
+  comments[lessonId].push({ studentId, studentName, comment: text, date: toHijri(new Date()) });
+  GharsStore.set('seerah_comments', comments);
+  inp.value = '';
+  showDynamicSuccess('✅ تم إرسال تعليقك بنجاح', 'شكراً على مشاركتك!');
+}
+
+function renderStudentHomework() {
+  const homeworks = GharsStore.get('homeworks', []);
+  const submissions = GharsStore.get('hw_submissions', {});
+  const now = Date.now();
+  const sent = homeworks.filter(hw => !hw.ended && (!hw.deadline || new Date(hw.deadline).getTime() > now));
+  const ended = homeworks.filter(hw => hw.ended || (hw.deadline && new Date(hw.deadline).getTime() <= now));
+
+  const sentEl = document.getElementById('student-sent-hw');
+  if (!sent.length) { sentEl.innerHTML = '<p style="color:var(--gray);font-size:13px;padding:12px 0;">لا توجد واجبات مرسلة</p>'; }
+  else {
+    let html = '';
+    sent.forEach(hw => {
+      const sub = (submissions[hw.id] || {})[studentId];
+      let cdHtml = '';
+      if (hw.deadline) {
+        const diff = new Date(hw.deadline).getTime() - now;
+        if (diff > 0) {
+          const h2=Math.floor(diff/3600000),m2=Math.floor((diff%3600000)/60000),s2=Math.floor((diff%60000)/1000);
+          cdHtml = `<span class="countdown-text ${diff<3600000?'danger':''}" id="scd-${hw.id}">⏱️ ${h2}:${String(m2).padStart(2,'0')}:${String(s2).padStart(2,'0')}</span>`;
+        }
+      } else { cdHtml = `<span class="countdown-text" style="color:var(--gray)">⏱️ وقت مفتوح</span>`; }
+      html += `<div class="homework-card">
+        <div class="hw-header">
+          <div><div class="hw-title">${escHtml(hw.title)}</div><div style="font-size:11px;color:var(--gray);margin-top:3px;">${(hw.questions||[]).length} سؤال</div></div>
+          ${sub ? `<button class="btn btn-outline-gold btn-sm" onclick="showMyAnswers('${hw.id}')">📋 إجابتي</button>` :
+                  `<button class="btn btn-gold btn-sm" onclick="openQuizWarning('${hw.id}')">▶️ ابدأ الحل</button>`}
+        </div>${cdHtml}
+      </div>`;
+    });
+    sentEl.innerHTML = html;
+    sent.forEach(hw => {
+      if (hw.deadline) {
+        const el = document.getElementById('scd-' + hw.id);
+        if (el) startCountdown(hw.deadline, el, () => renderStudentHomework());
+      }
+    });
+  }
+
+  const endedEl = document.getElementById('student-ended-hw');
+  if (!ended.length) { endedEl.innerHTML = '<p style="color:var(--gray);font-size:13px;padding:12px 0;">لا توجد واجبات منتهية</p>'; }
+  else {
+    let html = '';
+    ended.forEach(hw => {
+      const sub = (submissions[hw.id] || {})[studentId];
+      let statusHtml = sub
+        ? `<span class="badge badge-green">✅ ${sub.score}/${hw.totalScore}</span><button class="btn btn-outline-gold btn-xs" onclick="showMyAnswers('${hw.id}')">📋 إجابتي</button>`
+        : '<span class="badge badge-red">❌ لم تحل الواجب</span>';
+      html += `<div class="homework-card expired"><div class="hw-header"><div class="hw-title">${escHtml(hw.title)}</div><div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">${statusHtml}</div></div></div>`;
+    });
+    endedEl.innerHTML = html;
+  }
+}
+
+let currentHwId = null, usedWarnings = 0, quizTimerInterval = null, quizAnswers = {}, quizStarted = false;
+
+function openQuizWarning(hwId) {
+  currentHwId = hwId;
+  openModal('modal-quiz-warning');
+}
+
+function startQuizConfirmed() {
+  closeModal('modal-quiz-warning');
+  const hw = (GharsStore.get('homeworks', [])).find(h => h.id === currentHwId);
+  if (!hw) return;
+  usedWarnings = 0;
+  quizAnswers = {};
+  quizStarted = true;
+  if (quizTimerInterval) clearInterval(quizTimerInterval);
+
+  const quizEl = document.getElementById('quiz-fullscreen');
+  quizEl.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('quiz-hw-title').textContent = hw.title;
+  updateWarnings();
+
+  const timerEl = document.getElementById('quiz-timer-display');
+  let secs = hw.timerMinutes ? hw.timerMinutes * 60 : null;
+  if (secs !== null) {
+    updateTimerDisplay(secs, timerEl);
+    quizTimerInterval = setInterval(() => {
+      secs--;
+      if (secs <= 0) { clearInterval(quizTimerInterval); forceSubmit(hw, 'time'); }
+      else { updateTimerDisplay(secs, timerEl); if (secs <= 60) timerEl.style.color = 'var(--red)'; }
+    }, 1000);
+  } else {
+    timerEl.textContent = 'وقت مفتوح';
+    timerEl.style.color = 'var(--gray)';
+    timerEl.style.fontSize = '13px';
+  }
+
+  renderQuiz(hw);
+  setupAntiCheat();
+  try { if (quizEl.requestFullscreen) quizEl.requestFullscreen().catch(()=>{}); } catch(e) {}
+}
+
+function updateTimerDisplay(secs, el) {
+  const h=Math.floor(secs/3600),m=Math.floor((secs%3600)/60),s=secs%60;
+  el.textContent = h>0 ? `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}` : `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+function updateWarnings() {
+  const el = document.getElementById('quiz-warnings-display');
+  let html = '<span style="color:rgba(255,255,255,0.7);font-size:11px;margin-left:4px;">⚠️</span>';
+  for (let i=0;i<3;i++) html += `<div class="warning-dot ${i<usedWarnings?'used':''}"></div>`;
+  el.innerHTML = html;
+}
+
+function renderQuiz(hw) {
+  let html = '';
+  hw.questions.forEach((q, qi) => {
+    html += `<div class="question-card">
+      <div class="question-num">السؤال ${qi+1} من ${hw.questions.length}</div>
+      <div class="question-text" oncontextmenu="return false;" onselectstart="return false;" style="user-select:none;-webkit-user-select:none;">${escHtml(q.text)}</div>`;
+    q.choices.forEach(c => {
+      html += `<div class="choice-item" onclick="selectChoice('${q.id}','${c.id}','${hw.id}')" id="choice-${q.id}-${c.id}">${escHtml(c.text)}</div>`;
+    });
+    html += `</div>`;
+  });
+  html += `<div style="text-align:center;padding-bottom:30px;"><button class="btn btn-gold" style="font-size:16px;padding:14px 40px;" onclick="submitQuiz('${hw.id}')">📤 إرسال الإجابات</button></div>`;
+  document.getElementById('quiz-content').innerHTML = html;
+}
+
+function selectChoice(qId, cId, hwId) {
+  const hw = (GharsStore.get('homeworks', [])).find(h => h.id === hwId);
+  if (!hw) return;
+  const q = hw.questions.find(q => q.id === qId);
+  if (!q) return;
+  q.choices.forEach(c => { const el = document.getElementById(`choice-${qId}-${c.id}`); if (el) el.classList.remove('selected'); });
+  const el = document.getElementById(`choice-${qId}-${cId}`);
+  if (el) el.classList.add('selected');
+  quizAnswers[qId] = cId;
+}
+
+function setupAntiCheat() {
+  document.addEventListener('copy', cheatHandler);
+  document.addEventListener('cut', cheatHandler);
+  document.addEventListener('keydown', preventCopyKey);
+  document.addEventListener('visibilitychange', visibilityHandler);
+  document.addEventListener('contextmenu', ctxHandler);
+}
+
+function cleanupAntiCheat() {
+  document.removeEventListener('copy', cheatHandler);
+  document.removeEventListener('cut', cheatHandler);
+  document.removeEventListener('keydown', preventCopyKey);
+  document.removeEventListener('visibilitychange', visibilityHandler);
+  document.removeEventListener('contextmenu', ctxHandler);
+}
+
+function cheatHandler(e) { if (!quizStarted) return; e.preventDefault(); addWarning('copy'); }
+function preventCopyKey(e) { if (!quizStarted) return; if ((e.ctrlKey||e.metaKey) && (e.key==='c'||e.key==='x'||e.key==='a')) { e.preventDefault(); addWarning('copy'); } }
+function visibilityHandler() { if (!quizStarted) return; if (document.hidden) addWarning('exit'); }
+function ctxHandler(e) { if (!quizStarted) return; e.preventDefault(); addWarning('screenshot'); }
+
+function addWarning(type) {
+  if (!quizStarted) return;
+  usedWarnings++;
+  const subs = GharsStore.get('hw_submissions', {});
+  if (!subs[currentHwId]) subs[currentHwId] = {};
+  if (!subs[currentHwId][studentId]) subs[currentHwId][studentId] = { warnings:0, cheatLogs:[] };
+  subs[currentHwId][studentId].warnings = (subs[currentHwId][studentId].warnings||0)+1;
+  if (!subs[currentHwId][studentId].cheatLogs) subs[currentHwId][studentId].cheatLogs = [];
+  subs[currentHwId][studentId].cheatLogs.push({ type, time:new Date().toISOString() });
+  GharsStore.set('hw_submissions', subs);
+  updateWarnings();
+  const rem = 3 - usedWarnings;
+  if (rem <= 0) {
+    const hw = (GharsStore.get('homeworks', [])).find(h => h.id === currentHwId);
+    forceSubmit(hw, 'cheating');
+  } else {
+    showToast(`⚠️ إنذار! تبقى ${rem} إنذار`, 'warning');
+  }
+}
+
+function submitQuiz(hwId) {
+  const hw = (GharsStore.get('homeworks', [])).find(h => h.id === hwId);
+  if (hw) finalizeQuiz(hw, 'submitted');
+}
+
+function forceSubmit(hw, reason) { if (hw) finalizeQuiz(hw, reason); }
+
+function finalizeQuiz(hw, reason) {
+  quizStarted = false;
+  if (quizTimerInterval) { clearInterval(quizTimerInterval); quizTimerInterval = null; }
+  cleanupAntiCheat();
+
+  let score=0, correct=0, wrong=0;
+  const answers = hw.questions.map(q => {
+    const chosenId = quizAnswers[q.id];
+    const chosenChoice = q.choices.find(c => c.id === chosenId);
+    const isCorrect = !!(chosenChoice && chosenChoice.correct);
+    if (isCorrect) { score += q.score; correct++; }
+    else if (chosenId) { wrong++; }
+    return { qId:q.id, chosen:chosenChoice?chosenChoice.text:null, correct:isCorrect };
+  });
+
+  if (reason === 'cheating') score = 0;
+
+  const subs = GharsStore.get('hw_submissions', {});
+  if (!subs[hw.id]) subs[hw.id] = {};
+  const existing = subs[hw.id][studentId] || {};
+  subs[hw.id][studentId] = { ...existing, score, correct, wrong, answers, submittedAt:new Date().toISOString(), reason };
+  GharsStore.set('hw_submissions', subs);
+
+  document.getElementById('quiz-fullscreen').classList.remove('active');
+  document.body.style.overflow = '';
+  try { if (document.exitFullscreen) document.exitFullscreen().catch(()=>{}); } catch(e) {}
+
+  if (reason === 'time') showDynamicSuccess('⌛ انتهى وقت الاختبار', `تم تسجيل إجاباتك. درجتك: ${score}/${hw.totalScore}`);
+  else if (reason === 'cheating') showDynamicSuccess('🚨 تم إخراجك من الاختبار', 'استنفدت جميع الإنذارات. تم تسجيل درجة صفر.');
+  else showDynamicSuccess('✅ تم تسليم الواجب بنجاح!', `درجتك: ${score}/${hw.totalScore} • صحيح : ${correct} • خطأ : ${wrong}`);
+  renderStudentHomework();
+}
+
+function showMyAnswers(hwId) {
+  const hw = (GharsStore.get('homeworks', [])).find(h => h.id === hwId);
+  const sub = ((GharsStore.get('hw_submissions', {}))[hwId] || {})[studentId];
+  if (!hw || !sub) return;
+  document.getElementById('my-answers-title').textContent = `📋 إجاباتي - ${hw.title}`;
+  let html = `<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
+    <div class="bottom-stat-card" style="flex:1;min-width:110px;"><span class="bsc-icon">🏆</span><span class="bsc-value">${sub.score}/${hw.totalScore}</span><span class="bsc-label">الدرجة</span></div>
+    <div class="bottom-stat-card" style="flex:1;min-width:110px;"><span class="bsc-icon">✅</span><span class="bsc-value">${sub.correct||0}</span><span class="bsc-label">عدد الإجابات الصحيحة</span></div>
+    <div class="bottom-stat-card" style="flex:1;min-width:110px;"><span class="bsc-icon">❌</span><span class="bsc-value">${sub.wrong||0}</span><span class="bsc-label">عدد الإجابات الخاطئة</span></div>
+  </div>`;
+  if (sub.answers) {
+    sub.answers.forEach((ans, i) => {
+      const q = hw.questions[i];
+      if (!q) return;
+      const correctChoice = q.choices.find(c => c.correct);
+      html += `<div class="answer-row ${ans.correct?'right-ans':'wrong-ans'}">
+        <div class="q-text">${i+1}. ${escHtml(q.text)}</div>
+        <div class="student-ans">إجابتي: ${ans.chosen||'-'}</div>
+        <div class="correct-ans"> الإجابة الصحيحة: ${correctChoice?correctChoice.text:'-'}</div>
+      </div>`;
+    });
+  }
+  document.getElementById('my-answers-content').innerHTML = html;
+  showPage('my-answers');
+}
+
+function showDynamicSuccess(title, msg) {
+  let m = document.getElementById('smd');
+  if (!m) {
+    m = document.createElement('div');
+    m.id = 'smd';
+    m.className = 'modal-overlay';
+    m.innerHTML = `<div class="modal" style="max-width:380px;text-align:center;">
+      <button class="modal-close" onclick="closeModal('smd')">✕</button>
+      <div style="font-size:48px;margin-bottom:12px;" id="smd-icon">✅</div>
+      <h3 style="color:var(--navy);margin-bottom:8px;font-size:17px;" id="smd-title"></h3>
+      <p style="color:var(--gray);font-size:13px;margin-bottom:20px;" id="smd-msg"></p>
+      <button class="btn btn-gold" onclick="closeModal('smd')">حسناً ✓</button>
+    </div>`;
+    document.body.appendChild(m);
+    m.addEventListener('click', (e) => { if(e.target===m) closeModal('smd'); });
+  }
+  document.getElementById('smd-title').textContent = title;
+  document.getElementById('smd-msg').textContent = msg;
+  openModal('smd');
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+document.getElementById('modal-quiz-warning').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('modal-quiz-warning')) closeModal('modal-quiz-warning');
+});
+
+const storedPage = sessionStorage.getItem('student_page');
+if (storedPage && storedPage !== 'null') { showPage(storedPage); }
+else { renderStudentHome(); }
+startMeetingCountdown();
+</script>
+</body>
+</html>
